@@ -1,0 +1,7 @@
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+eclipse.project.name = appName + '-core'
+
+dependencies {
+  compileOnly project(':gdx')
+//  api "com.badlogicgames.gdx:gdx:$gdxVersion"
+}
