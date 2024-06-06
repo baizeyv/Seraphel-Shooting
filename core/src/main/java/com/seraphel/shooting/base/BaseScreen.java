@@ -1,6 +1,7 @@
 package com.seraphel.shooting.base;
 
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.seraphel.shooting.constant.Global;
 
 public class BaseScreen implements Screen {
@@ -47,6 +48,10 @@ public class BaseScreen implements Screen {
     public void dispose() {
         stage.clear();
         stage.dispose();
+    }
+
+    public void addActor(Actor actor) {
+        stage.addActor(actor);
     }
 
 }

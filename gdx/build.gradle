@@ -7,4 +7,5 @@ sourceSets.main.java.srcDirs = ["src/"]
 
 dependencies {
   implementation fileTree(include: '*.jar', dir: 'libs')
+  compileOnly project(":gdx-jnigen-loader")
 }
