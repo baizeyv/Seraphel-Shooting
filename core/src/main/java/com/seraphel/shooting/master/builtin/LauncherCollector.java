@@ -1,16 +1,12 @@
 package com.seraphel.shooting.master.builtin;
 
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
-import com.seraphel.shooting.master.builtin.data.NodeData;
 
 public class LauncherCollector {
 
     public final String name;
 
     public final OrderedMap<LauncherEntry, LauncherEntry> launchers = new OrderedMap<LauncherEntry, LauncherEntry>();
-
-    public final Array<NodeData> nodes = new Array<NodeData>();
 
     private final LauncherEntry lookup = new LauncherEntry();
 
@@ -21,7 +17,7 @@ public class LauncherCollector {
         this.launchers.orderedKeys().ordered = false;
     }
 
-    public void setComponent(int pipeIndex, String name, Launcher launcher) {
+    public void setLauncher(int pipeIndex, String name, Launcher launcher) {
         if (pipeIndex < 0)
             throw new IllegalArgumentException("pipeIndex cannot be negative");
         if (launcher == null)

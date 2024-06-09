@@ -3,7 +3,7 @@ package com.seraphel.shooting.master.extend.data;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 
-public class BulletData {
+public class BulletData implements Cloneable {
 
     /* 生命 unit: frame */
     public int life;
@@ -57,6 +57,15 @@ public class BulletData {
 
     /* -------------------- split line -------------------- */
 
-    public final Array<CaseGroupData> caseGroups = new Array<CaseGroupData>();
+    public Array<CaseGroupData> caseGroups = new Array<CaseGroupData>();
 
+    public Object cloneX() throws CloneNotSupportedException {
+        BulletData res = (BulletData) super.clone();
+        res.color = new Color(this.color);
+        res.caseGroups = new Array<CaseGroupData>();
+        for (CaseGroupData caseGroupData : this.caseGroups) {
+            res.caseGroups.add((CaseGroupData) caseGroupData.cloneX());
+        }
+        return res;
+    }
 }

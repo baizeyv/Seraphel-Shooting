@@ -21,9 +21,12 @@ public class NodeTreeDataLoader extends AsynchronousAssetLoader<NodeTreeData, No
     @Override
     public void loadAsync(AssetManager manager, String fileName, FileHandle file, Parameter parameter) {
         info.nodeTreeData = new NodeTreeData();
+        info.type = "json"
+        ;
 
         if (info.type.equals("json")) {
-
+            NodeTreeJson nodeTreeJson = new NodeTreeJson();
+            info.nodeTreeData = nodeTreeJson.readNodeTreeData(file);
         } else if (info.type.equals("cs")) {
 
         } else {

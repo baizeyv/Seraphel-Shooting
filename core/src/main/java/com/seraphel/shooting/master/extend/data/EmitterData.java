@@ -2,7 +2,7 @@ package com.seraphel.shooting.master.extend.data;
 
 import com.badlogic.gdx.utils.Array;
 
-public class EmitterData {
+public class EmitterData implements Cloneable {
 
     public int id;
 
@@ -124,6 +124,16 @@ public class EmitterData {
 
     /* -------------------- split line -------------------- */
 
-    public final Array<CaseGroupData> caseGroups = new Array<CaseGroupData>();
+    public Array<CaseGroupData> caseGroups = new Array<CaseGroupData>();
+
+    public Object cloneX() throws CloneNotSupportedException {
+        EmitterData res = (EmitterData) super.clone();
+        res.bulletData = (BulletData) bulletData.cloneX();
+        res.caseGroups = new Array<CaseGroupData>();
+        for (CaseGroupData caseGroupData : this.caseGroups) {
+            res.caseGroups.add((CaseGroupData) caseGroupData.cloneX());
+        }
+        return res;
+    }
 
 }

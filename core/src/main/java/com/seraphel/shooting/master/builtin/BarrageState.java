@@ -1,6 +1,7 @@
 package com.seraphel.shooting.master.builtin;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ArrayMap;
 import com.seraphel.shooting.master.builtin.data.BarrageStateData;
 import com.seraphel.shooting.master.builtin.timeline.EventTimeline;
 import com.seraphel.shooting.master.builtin.timeline.Timeline;
@@ -10,7 +11,7 @@ public class BarrageState {
     /**
      * default empty barrage
      */
-    private static final Barrage emptyBarrage = new Barrage("<empty>", new Array<Timeline>(0), 0);
+    private static final Barrage emptyBarrage = new Barrage("<empty>", new ArrayMap<String, Array<Timeline>>(0), 0);
 
     private BarrageStateData data;
 

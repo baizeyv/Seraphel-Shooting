@@ -11,6 +11,9 @@ insert_final_newline = true
 [*.{java,scala,groovy,kt,kts}]
 indent_size = 4
 
+[*.json]
+indent_size = 4
+
 [*.gradle]
 indent_size = 2
 

@@ -58,4 +58,22 @@ public class NodeTreeData {
         return null;
     }
 
+    public EventData findEvent(String eventName) {
+        if (eventName == null)
+            throw new IllegalArgumentException("name cannot be null");
+        for (EventData eventData : events) {
+            if (eventData.name.equals(eventName))
+                return eventData;
+        }
+        return null;
+    }
+
+    public Array<String> getAllCollectorNames() {
+        Array<String> res = new Array<String>();
+        for (LauncherCollector collector : collectors) {
+            res.add(collector.name);
+        }
+        return res;
+    }
+
 }

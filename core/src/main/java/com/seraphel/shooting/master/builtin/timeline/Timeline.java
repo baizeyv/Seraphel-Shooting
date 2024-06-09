@@ -16,4 +16,8 @@ public interface Timeline {
 
     public int getPropertyId();
 
+    public int getFrameCount();
+
+    public float[] getFrames();
+
 }

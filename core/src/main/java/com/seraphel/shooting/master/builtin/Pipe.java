@@ -27,11 +27,11 @@ public class Pipe {
     }
 
     public void setToSetupPose() {
-        if (data.componentName == null)
+        if (data.launcherName == null)
             setComponent(null);
         else {
             launcher = null;
-            setComponent(node.nodeTree.getComponent(data.index, data.componentName));
+            setComponent(node.nodeTree.getComponent(data.index, data.launcherName));
         }
     }
 

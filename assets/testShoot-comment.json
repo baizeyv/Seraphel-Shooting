@@ -1,0 +1,99 @@
+{
+    "nodeTree": {
+        "version": "1.0.0"
+    },
+    "nodes": [
+        // 节点列表
+        {
+            "name": "root"
+        },
+        {
+            "name": "testNode",
+            "x": 100,
+            "y": 100,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "shearX": 0,
+            "shearY": 0,
+            "parent": "root"
+        }
+    ],
+    "pipes": [
+        // 管道列表
+        {
+            "name": "testPipe",
+            "node": "testNode",
+            "launcher": "testEmitter"
+        }
+    ],
+    "collectors": [
+        // 发射器收集者
+        {
+            "name": "default",
+            // 收集者名称
+            "launchers": {
+                // 发射器列表
+                "testPipe": {
+                    // 指定管道
+                    "testEmitter": {
+                        // 发射器名称
+                        "name": "testEmitter",
+                        "id": 0
+                    }
+                }
+            }
+        },
+        {
+            "name": "backup",
+            "launchers": {
+                "testPipe": {
+                    "testEmitter": {
+                    }
+                }
+            }
+        }
+    ],
+    "events": {
+        "testEvent": {
+            "time": 2
+        }
+    },
+    "barrages": {
+        "main": {
+            // 弹幕名称
+            "pipes": [
+                // 生效的管道
+                "testPipe"
+            ],
+            "nodes": {
+                // 节点动画
+                "testNode": {
+                    // 指定节点名称
+                    "translate": [
+                        {
+                            "x": 100,
+                            "time": 0,
+                            "startX": 0,
+                            "startY": 0,
+                            "endX": 1,
+                            "endY": 1
+                        }
+                    ],
+                    "rotate": [
+                    ],
+                    "scale": [
+                    ],
+                    "shear": [
+                    ]
+                }
+            },
+            "events": [
+                {
+                    "name": "test",
+                    "time": 1
+                }
+            ]
+        }
+    }
+}

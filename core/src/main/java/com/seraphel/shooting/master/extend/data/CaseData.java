@@ -4,7 +4,7 @@ import com.seraphel.shooting.master.extend.enumerate.ChangeType;
 import com.seraphel.shooting.master.extend.enumerate.OperatorType;
 import com.seraphel.shooting.master.extend.enumerate.PropertyType;
 
-public class CaseData {
+public class CaseData implements Cloneable {
 
     public PropertyType conditionA;
 
@@ -38,4 +38,9 @@ public class CaseData {
 
     public boolean specialRestore;
 
+    public Object cloneX() throws CloneNotSupportedException {
+        CaseData res = (CaseData) super.clone();
+        res.curve = (CurveData) this.curve.cloneX();
+        return res;
+    }
 }

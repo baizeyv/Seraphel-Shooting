@@ -6,6 +6,8 @@ import com.badlogic.gdx.assets.loaders.TextureAtlasLoader;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.seraphel.shooting.master.builtin.data.NodeTreeData;
+import com.seraphel.shooting.master.loader.NodeTreeDataLoader;
 import net.mwplay.cocostudio.ui.base.ManagerUIEditor;
 import net.mwplay.cocostudio.ui.base.loader.CocosUILoader;
 import net.mwplay.cocostudio.ui.base.loader.ManagerUILoader;
@@ -31,6 +33,9 @@ public class Asset {
         manager.setLoader(PlistAtlas.class, new PlistAtlasLoader(manager.getFileHandleResolver()));
         /* cocos ui loader */
         manager.setLoader(ManagerUIEditor.class, new ManagerUILoader(manager.getFileHandleResolver()));
+
+        /* shooting barrage loader */
+        manager.setLoader(NodeTreeData.class, new NodeTreeDataLoader(manager.getFileHandleResolver()));
 
         /* texture atlas loader */
         manager.setLoader(TextureAtlas.class, new TextureAtlasLoader(manager.getFileHandleResolver()));
@@ -79,6 +84,14 @@ public class Asset {
             manager.finishLoading();
         }
         return manager.get(atlasPath);
+    }
+
+    public NodeTreeData loadNodeTree(String nodeTreePath) {
+        if (!manager.isLoaded(nodeTreePath)) {
+            manager.load(nodeTreePath, NodeTreeData.class);
+            manager.finishLoading();
+        }
+        return manager.get(nodeTreePath);
     }
 
 }

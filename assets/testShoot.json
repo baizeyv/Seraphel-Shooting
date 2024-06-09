@@ -1,0 +1,104 @@
+{
+    "nodeTree": {
+        "version": "1.0.0"
+    },
+    "nodes": [
+        {
+            "name": "root"
+        },
+        {
+            "name": "testNode",
+            "x": 100,
+            "y": 100,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "shearX": 0,
+            "shearY": 0,
+            "parent": "root"
+        }
+    ],
+    "pipes": [
+        {
+            "name": "testPipe",
+            "node": "testNode",
+            "launcher": "testEmitter"
+        }
+    ],
+    "collectors": [
+        {
+            "name": "default",
+            "launchers": {
+                "testPipe": {
+                    "testEmitter": {
+                        "name": "testEmitter",
+                        "id": 0,
+                        "layerId": 0,
+                        "bindToId": -1,
+                        "deepBind": false,
+                        "x": 0,
+                        "y": 0,
+                        "startTime": 0,
+                        "endTime": 6000,
+                        "shootX": 300,
+                        "shootY": 200,
+                        "cycle": 30
+                    }
+                }
+            }
+        },
+        {
+            "name": "backup",
+            "launchers": {
+                "testPipe": {
+                    "testEmitter": {
+                        "name": "testEmitter",
+                        "id": 0,
+                        "layerId": 0,
+                        "bindToId": -1,
+                        "deepBind": false,
+                        "x": 0,
+                        "y": 0,
+                        "startTime": 0,
+                        "endTime": 200,
+                        "shootX": 300,
+                        "shootY": 200,
+                        "cycle": 5
+                    }
+                }
+            }
+        }
+    ],
+    "events": {
+        "testEvent": {
+            "time": 2
+        }
+    },
+    "barrages": {
+        "main": {
+            "pipes": [
+                "testPipe"
+            ],
+            "nodes": {
+                "testNode": {
+                    "translate": [
+                        {
+                            "x": 100,
+                            "time": 0,
+                            "startX": 0,
+                            "startY": 0,
+                            "endX": 1,
+                            "endY": 1
+                        }
+                    ],
+                    "rotate": [
+                    ],
+                    "scale": [
+                    ],
+                    "shear": [
+                    ]
+                }
+            }
+        }
+    }
+}

@@ -2,17 +2,15 @@ package com.seraphel.shooting.master.loader;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.SerializationException;
+import com.badlogic.gdx.utils.*;
+import com.seraphel.shooting.master.builtin.Barrage;
 import com.seraphel.shooting.master.builtin.Launcher;
 import com.seraphel.shooting.master.builtin.LauncherCollector;
-import com.seraphel.shooting.master.builtin.enumerate.LauncherType;
 import com.seraphel.shooting.master.builtin.data.EventData;
 import com.seraphel.shooting.master.builtin.data.NodeData;
 import com.seraphel.shooting.master.builtin.data.NodeTreeData;
 import com.seraphel.shooting.master.builtin.data.PipeData;
+import com.seraphel.shooting.master.builtin.enumerate.LauncherType;
 import com.seraphel.shooting.master.builtin.timeline.Timeline;
 import com.seraphel.shooting.master.extend.Emitter;
 import com.seraphel.shooting.master.extend.data.*;
@@ -21,6 +19,30 @@ import com.seraphel.shooting.master.extend.enumerate.OperatorType;
 import com.seraphel.shooting.master.extend.enumerate.PropertyType;
 
 public class NodeTreeJson {
+
+    /* key -> collector name | value -> <launcher name, timeline array> */
+    private final ArrayMap<String, ArrayMap<String, Array<Timeline>>> launcherTimelines = new ArrayMap<String, ArrayMap<String, Array<Timeline>>>();
+
+    private void putLauncherTimeline(String collectorName, String launcherName, Array<Timeline> timelines) {
+        if (launcherTimelines.containsKey(collectorName)) {
+            ArrayMap<String, Array<Timeline>> map = launcherTimelines.get(collectorName);
+            map.put(launcherName, timelines);
+        } else {
+            ArrayMap<String, Array<Timeline>> map = new ArrayMap<String, Array<Timeline>>();
+            map.put(launcherName, timelines);
+            launcherTimelines.put(collectorName, map);
+        }
+    }
+
+    private Array<Timeline> getLauncherTimeline(String collectorName, String launcherName) {
+        if (launcherTimelines.containsKey(collectorName)) {
+            ArrayMap<String, Array<Timeline>> map = launcherTimelines.get(collectorName);
+            if (map.containsKey(launcherName)) {
+                return map.get(launcherName);
+            }
+        }
+        return null;
+    }
 
     protected JsonValue parse(FileHandle file) {
         if (file == null)
@@ -72,29 +94,24 @@ public class NodeTreeJson {
             if (nodeData == null)
                 throw new SerializationException("Pipe node not found: " + nodeName);
             PipeData data = new PipeData(nodeTreeData.pipes.size, pipeName, nodeData);
-            data.componentName = pipeMap.getString("component", null);
+            data.launcherName = pipeMap.getString("launcher", null);
 
             nodeTreeData.pipes.add(data);
         }
 
-        // ComponentCollector
+        // LauncherCollector
         for (JsonValue collectorMap = root.getChild("collectors"); collectorMap != null; collectorMap = collectorMap.next) {
             LauncherCollector collector = new LauncherCollector(collectorMap.getString("name"));
-            for (JsonValue entry = collectorMap.getChild("nodes"); entry != null; entry = entry.next) {
-                NodeData node = nodeTreeData.findNode(entry.asString());
-                if (node == null)
-                    throw new SerializationException("Node not found: " + entry);
-                collector.nodes.add(node);
-            }
-            for (JsonValue pipeEntry = collectorMap.getChild("components"); pipeEntry != null; pipeEntry = pipeEntry.next) {
+            for (JsonValue pipeEntry = collectorMap.getChild("launchers"); pipeEntry != null; pipeEntry = pipeEntry.next) {
                 PipeData pipe = nodeTreeData.findPipe(pipeEntry.name);
                 if (pipe == null)
                     throw new SerializationException("Pipe not found: " + pipeEntry.name);
                 for (JsonValue entry = pipeEntry.child; entry != null; entry = entry.next) {
                     try {
-                        Launcher launcher = readComponent(entry, collector, entry.name);
-                        if (launcher != null)
-                            collector.setComponent(pipe.index, entry.name, launcher);
+                        Launcher launcher = readLauncher(entry, collector, entry.name);
+                        if (launcher != null) {
+                            collector.setLauncher(pipe.index, entry.name, launcher);
+                        }
                     } catch (Throwable ex) {
                         throw new SerializationException("Error reading component: " + entry.name + ", collector: " + collector, ex);
                     }
@@ -106,7 +123,7 @@ public class NodeTreeJson {
         }
 
         // Events
-        for (JsonValue eventMap = root.getChild("events");eventMap != null; eventMap = eventMap.next) {
+        for (JsonValue eventMap = root.getChild("events"); eventMap != null; eventMap = eventMap.next) {
             EventData data = new EventData(eventMap.name);
             nodeTreeData.events.add(data);
         }
@@ -115,6 +132,7 @@ public class NodeTreeJson {
         for (JsonValue barrageMap = root.getChild("barrages"); barrageMap != null; barrageMap = barrageMap.next) {
             try {
                 // TODO: readBarrage()
+                readBarrage(barrageMap, barrageMap.name, nodeTreeData);
             } catch (Throwable ex) {
                 throw new SerializationException("Error reading barrage: " + barrageMap.name, ex);
             }
@@ -129,13 +147,13 @@ public class NodeTreeJson {
         return nodeTreeData;
     }
 
-    private Launcher readComponent(JsonValue map, LauncherCollector collector, String name) {
+    private Launcher readLauncher(JsonValue map, LauncherCollector collector, String name) {
         name = map.getString("name", name);
 
         String type = map.getString("type", LauncherType.emitter.name());
 
         switch (LauncherType.valueOf(type)) {
-            case emitter:{
+            case emitter: {
                 EmitterData data = new EmitterData();
                 data.id = map.getInt("id", 0);
                 data.layerId = map.getInt("layerId", 0);
@@ -193,7 +211,7 @@ public class NodeTreeJson {
                 bulletData.rdToward = map.getFloat("rdToward", 0);
                 bulletData.towardSameAsSpeedDirection = map.getBoolean("towardSameAsSpeedDirection", false);
                 bulletData.speed = map.getFloat("speed", 0);
-                bulletData.rdSpeed  = map.getFloat("rdSpeed", 0);
+                bulletData.rdSpeed = map.getFloat("rdSpeed", 0);
                 bulletData.acceleration = map.getFloat("acceleration", 0);
                 bulletData.rdAcceleration = map.getFloat("rdAcceleration", 0);
                 bulletData.accelerationDirection = map.getFloat("accelerationDirection", 0);
@@ -208,9 +226,16 @@ public class NodeTreeJson {
 
                 data.bulletData = bulletData;
 
-                return new Emitter(data, collector, name);
+                try {
+                    Emitter res = new Emitter(data, collector, name);
+                    Array<Timeline> timelines = TimelineGenerator.emitter(res);
+                    putLauncherTimeline(collector.name, name, timelines);
+                    return res;
+                } catch (CloneNotSupportedException e) {
+                    throw new GdxRuntimeException(e);
+                }
             }
-            case transmitter:{
+            case transmitter: {
 
             }
         }
@@ -271,6 +296,7 @@ public class NodeTreeJson {
     private CurveData readCurve(JsonValue curveMap) {
         CurveData data = new CurveData();
 
+        data.time = curveMap.getFloat("time", 0);
         data.curveStartX = curveMap.getFloat("startX", 0);
         data.curveStartY = curveMap.getFloat("startY", 0);
         data.curveEndX = curveMap.getFloat("endX", 1);
@@ -280,8 +306,67 @@ public class NodeTreeJson {
     }
 
     private void readBarrage(JsonValue map, String name, NodeTreeData nodeTreeData) {
-        Array<Timeline> timelines = new Array<Timeline>();
-        float duration = 0;
+        /* <收集者名称, 所有时间轴> */
+        ArrayMap<String, Array<Timeline>> timelineMap = new ArrayMap<String, Array<Timeline>>();
+        float duration = 0; // TODO: 计算弹幕时长
+
+        // Valid Pipes
+        for (JsonValue pipeMap = map.getChild("pipes"); pipeMap != null; pipeMap = pipeMap.next) {
+            String pipeName = pipeMap.asString(); // 生效的管道名称
+            PipeData pipeData = nodeTreeData.findPipe(pipeName);
+            if (pipeData == null)
+                throw new GdxRuntimeException("Config Error.");
+            Array<String> collectorNames = nodeTreeData.getAllCollectorNames();
+            for (String collectorName : collectorNames) {
+                Array<Timeline> timelines = getLauncherTimeline(collectorName, pipeData.launcherName);
+                if (timelines != null) {
+                    if (timelineMap.containsKey(collectorName)) {
+                        timelineMap.get(collectorName).addAll(timelines);
+                    } else {
+                        timelineMap.put(collectorName, timelines);
+                    }
+                }
+            }
+        }
+
+        // Node
+        for (JsonValue nodeMap = map.getChild("nodes"); nodeMap != null; nodeMap = nodeMap.next) {
+            NodeData node = nodeTreeData.findNode(nodeMap.name);
+            if (node == null)
+                throw new SerializationException("Node " + nodeMap.name + " not found.");
+            for (JsonValue lineMap = nodeMap.child; lineMap != null; lineMap = lineMap.next) {
+                String timelineType = lineMap.name;
+                if (timelineType.equals("rotate")) {
+                    // TODO:
+                } else if (timelineType.equals("translate") || timelineType.equals("scale") || timelineType.equals("shear")) {
+                    // TODO:
+                } else {
+                    throw new GdxRuntimeException("Invalid timeline type: " + timelineType);
+                }
+            }
+        }
+
+        // Event
+        JsonValue eventsMap = map.get("events");
+        if (eventsMap != null) {
+            Timeline timeline = TimelineGenerator.builtinEvent(eventsMap, nodeTreeData);
+            Array<String> collectorNames = nodeTreeData.getAllCollectorNames();
+            for (String collectorName : collectorNames) {
+                if (timelineMap.containsKey(collectorName)) {
+                    timelineMap.get(collectorName).add(timeline);
+                } else {
+                    Array<Timeline> arr = new Array<Timeline>();
+                    arr.add(timeline);
+                    timelineMap.put(collectorName, arr);
+                }
+            }
+            duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() - 1]);
+        }
+
+        for (ObjectMap.Entry<String, Array<Timeline>> arr : timelineMap) {
+            arr.value.shrink();
+        }
+        nodeTreeData.barrages.add(new Barrage(name, timelineMap, duration));
     }
 
 }

@@ -1,6 +1,8 @@
 package com.seraphel.shooting.master.extend.data;
 
-public class CurveData {
+public class CurveData implements Cloneable {
+
+    public float time;
 
     public float curveStartX;
 
@@ -10,4 +12,7 @@ public class CurveData {
 
     public float curveEndY;
 
+    public Object cloneX() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }

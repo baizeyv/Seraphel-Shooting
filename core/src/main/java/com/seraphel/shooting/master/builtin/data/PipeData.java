@@ -8,7 +8,7 @@ public class PipeData {
 
     public final NodeData nodeData;
 
-    public String componentName;
+    public String launcherName;
 
     public PipeData(int index, String name, NodeData nodeData) {
         if (index < 0)

@@ -1,18 +1,11 @@
 package com.seraphel.shooting.master.actor;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.utils.Array;
-import com.seraphel.shooting.master.builtin.Barrage;
+import com.seraphel.shooting.constant.Asset;
 import com.seraphel.shooting.master.builtin.BarrageState;
-import com.seraphel.shooting.master.builtin.Event;
 import com.seraphel.shooting.master.builtin.NodeTree;
 import com.seraphel.shooting.master.builtin.data.BarrageStateData;
-import com.seraphel.shooting.master.builtin.data.EventData;
-import com.seraphel.shooting.master.builtin.data.NodeData;
 import com.seraphel.shooting.master.builtin.data.NodeTreeData;
-import com.seraphel.shooting.master.builtin.timeline.EventTimeline;
-import com.seraphel.shooting.master.builtin.timeline.ShootTimeline;
-import com.seraphel.shooting.master.builtin.timeline.Timeline;
 
 public class TestActor extends Actor {
 
@@ -22,6 +15,13 @@ public class TestActor extends Actor {
 
     public TestActor() {
         // TODO:
+        NodeTreeData data = Asset.fetch().loadNodeTree("testShoot.json");
+        nodeTree = new NodeTree(data);
+        BarrageStateData barrageStateData = new BarrageStateData(data);
+        state = new BarrageState(barrageStateData);
+
+        state.play("main", false);
+/*
         NodeTreeData nodeTreeData = new NodeTreeData();
         nodeTreeData.name = "TestName";
         NodeData nodeData = new NodeData(0, "root", null);
@@ -39,7 +39,9 @@ public class TestActor extends Actor {
         Array<Timeline> arr = new Array<Timeline>();
         arr.add(shootTimeline);
         arr.add(eventTimeline);
-        Barrage barrage = new Barrage("main", arr, 10);
+        ArrayMap<String, Array<Timeline>> tc = new ArrayMap<String, Array<Timeline>>();
+        tc.put("default", arr);
+        Barrage barrage = new Barrage("main", tc, 10);
 
         nodeTreeData.barrages.add(barrage);
 
@@ -49,6 +51,7 @@ public class TestActor extends Actor {
         state = new BarrageState(barrageStateData);
 
         state.play("main", false);
+*/
     }
 
     @Override

@@ -43,6 +43,7 @@ public class BaseTimeline implements Timeline {
      * get the frame array length
      * @return the number of key frames for this timeline
      */
+    @Override
     public int getFrameCount() {
         return frames.length;
     }
@@ -51,6 +52,7 @@ public class BaseTimeline implements Timeline {
      * get frames array
      * @return the time in seconds for each key frames.
      */
+    @Override
     public float[] getFrames() {
         return frames;
     }
