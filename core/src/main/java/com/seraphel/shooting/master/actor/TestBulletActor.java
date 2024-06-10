@@ -1,6 +1,7 @@
 package com.seraphel.shooting.master.actor;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.seraphel.shooting.actor.SpriteActor;
 import com.seraphel.shooting.master.Constant;
@@ -21,7 +22,7 @@ public class TestBulletActor extends SpriteActor implements Projectile {
 
     private final Array<Timeline> timelines = new Array<>();
 
-    private float speedX, speedY;
+    private final Vector2 speed = new Vector2();
 
     public TestBulletActor(String atlasPath, String regionName, BulletData data, Emitter emitter) {
         super(atlasPath, regionName);
@@ -47,8 +48,8 @@ public class TestBulletActor extends SpriteActor implements Projectile {
 
         state.play(this);
         /* ------------------------------------------------------------------------------------------- */
-        speedX = data.speed * MathUtils.cosDeg(data.speedDirection) * data.horizontalRatio;
-        speedY = data.speed * MathUtils.sinDeg(data.speedDirection) * data.verticalRatio;
+        speed.x = data.speed * MathUtils.cosDeg(data.speedDirection) * data.horizontalRatio;
+        speed.y = data.speed * MathUtils.sinDeg(data.speedDirection) * data.verticalRatio;
     }
 
     @Override
@@ -70,9 +71,9 @@ public class TestBulletActor extends SpriteActor implements Projectile {
         // 位移变换
         float accelerationX = data.acceleration * MathUtils.cosDeg(data.accelerationDirection) * data.horizontalRatio;
         float accelerationY = data.acceleration * MathUtils.sinDeg(data.accelerationDirection) * data.verticalRatio;
-        speedX += accelerationX * (delta / Constant.STANDARD_FRAME_TIME);
-        speedY += accelerationY * (delta / Constant.STANDARD_FRAME_TIME);
-        moveBy(speedX * delta, speedY * delta);
+        speed.x += accelerationX * (delta / Constant.STANDARD_FRAME_TIME);
+        speed.y += accelerationY * (delta / Constant.STANDARD_FRAME_TIME);
+        moveBy(speed.x * delta, speed.y * delta);
         /* ------------------------------------------------------------- */
         // 角度变换
         applyRotation();
@@ -95,7 +96,7 @@ public class TestBulletActor extends SpriteActor implements Projectile {
 
     public void applyRotation() {
         if (data.towardSameAsSpeedDirection) {
-            setRotation(data.speedDirection);
+            setRotation(speed.angleDeg());
         } else {
             setRotation(data.toward + node.getWorldRotationX());
         }
