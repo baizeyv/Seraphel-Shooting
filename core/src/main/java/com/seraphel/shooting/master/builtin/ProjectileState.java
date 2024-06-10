@@ -1,7 +1,6 @@
 package com.seraphel.shooting.master.builtin;
 
 import com.badlogic.gdx.utils.Array;
-import com.seraphel.shooting.master.ProjectileEventQueue;
 import com.seraphel.shooting.master.builtin.data.ProjectileData;
 import com.seraphel.shooting.master.builtin.timeline.EventTimeline;
 import com.seraphel.shooting.master.builtin.timeline.Timeline;

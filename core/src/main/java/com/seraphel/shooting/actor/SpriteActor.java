@@ -1,5 +1,6 @@
 package com.seraphel.shooting.actor;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -107,6 +108,20 @@ public class SpriteActor extends Actor {
         super.setOriginY(originY);
         if (sprite != null)
             sprite.setOrigin(getOriginX(), getOriginY());
+    }
+
+    @Override
+    public void setColor(Color color) {
+        super.setColor(color);
+        if (sprite != null)
+            sprite.setColor(color);
+    }
+
+    @Override
+    public void setColor(float r, float g, float b, float a) {
+        super.setColor(r, g, b, a);
+        if (sprite != null)
+            sprite.setColor(r, g, b, a);
     }
 
     @Override

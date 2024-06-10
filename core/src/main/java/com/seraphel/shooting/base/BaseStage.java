@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.seraphel.shooting.constant.Log;
 
 /**
  * Note: (0, 0) 点在屏幕最中间
@@ -25,7 +26,7 @@ public class BaseStage extends Stage {
     }
 
     public void Update(float worldWidth, float worldHeight) {
-        System.out.println("WorldWidth: " + worldWidth + " <--> " + "WorldHeight: " + worldHeight);
+        Log.info("World Size -> worldWidth: " + worldWidth + ", worldHeight: " + worldHeight);
         Viewport vp = getViewport();
         vp.getCamera().position.set(0, 0, 0);
         float overY = 0, overX = 0;

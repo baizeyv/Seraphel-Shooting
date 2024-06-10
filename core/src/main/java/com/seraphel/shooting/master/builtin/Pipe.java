@@ -31,7 +31,7 @@ public class Pipe {
             setComponent(null);
         else {
             launcher = null;
-            setComponent(node.nodeTree.getComponent(data.index, data.launcherName));
+            setComponent(node.nodeTree.getLauncher(data.index, data.launcherName));
         }
     }
 

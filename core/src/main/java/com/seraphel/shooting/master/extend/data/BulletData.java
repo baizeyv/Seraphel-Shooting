@@ -2,8 +2,9 @@ package com.seraphel.shooting.master.extend.data;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
+import com.seraphel.shooting.master.builtin.data.ProjectileData;
 
-public class BulletData implements Cloneable {
+public class BulletData extends ProjectileData implements Cloneable {
 
     /* 生命 unit: frame */
     public int life;
@@ -34,6 +35,9 @@ public class BulletData implements Cloneable {
     /* 速度 */
     public float speed;
 
+    /* 速度方向 */
+    public float speedDirection;
+
     /* 速度随机增量 */
     public float rdSpeed;
 
@@ -61,7 +65,10 @@ public class BulletData implements Cloneable {
 
     public Object cloneX() throws CloneNotSupportedException {
         BulletData res = (BulletData) super.clone();
-        res.color = new Color(this.color);
+        if (this.color != null)
+            res.color = new Color(this.color);
+        else
+            res.color = new Color(Color.WHITE);
         res.caseGroups = new Array<CaseGroupData>();
         for (CaseGroupData caseGroupData : this.caseGroups) {
             res.caseGroups.add((CaseGroupData) caseGroupData.cloneX());

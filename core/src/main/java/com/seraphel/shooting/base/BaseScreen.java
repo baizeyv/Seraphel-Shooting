@@ -3,6 +3,7 @@ package com.seraphel.shooting.base;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.seraphel.shooting.constant.Global;
+import com.seraphel.shooting.constant.Log;
 
 public class BaseScreen implements Screen {
 
@@ -25,7 +26,7 @@ public class BaseScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        System.out.println("SCREEN RESIZE: " + width + " " + height);
+        Log.info("Screen Size -> width: " + width + ", height:" + height);
         stage.getViewport().update(width, height);
     }
 

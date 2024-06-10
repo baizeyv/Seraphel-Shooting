@@ -110,6 +110,7 @@ public class NodeTreeJson {
                     try {
                         Launcher launcher = readLauncher(entry, collector, entry.name);
                         if (launcher != null) {
+                            launcher.setBasicData(pipe);
                             collector.setLauncher(pipe.index, entry.name, launcher);
                         }
                     } catch (Throwable ex) {
@@ -197,27 +198,31 @@ public class NodeTreeJson {
                     data.caseGroups.add(caseGroupData);
                 }
 
+                JsonValue bulletMap = map.get("bullet");
                 BulletData bulletData = new BulletData();
-                bulletData.life = map.getInt("life", 0);
-                bulletData.type = map.getInt("type", 0);
-                bulletData.scaleX = map.getFloat("scaleX", 0);
-                bulletData.scaleY = map.getFloat("scaleY", 0);
-                int R = map.getInt("R", 0);
-                int G = map.getInt("G", 0);
-                int B = map.getInt("B", 0);
-                int A = map.getInt("A", 0);
-                bulletData.color = new Color(R / 255f, G / 255f, B / 255f, A / 100f);
-                bulletData.toward = map.getFloat("toward", 0);
-                bulletData.rdToward = map.getFloat("rdToward", 0);
-                bulletData.towardSameAsSpeedDirection = map.getBoolean("towardSameAsSpeedDirection", false);
-                bulletData.speed = map.getFloat("speed", 0);
-                bulletData.rdSpeed = map.getFloat("rdSpeed", 0);
-                bulletData.acceleration = map.getFloat("acceleration", 0);
-                bulletData.rdAcceleration = map.getFloat("rdAcceleration", 0);
-                bulletData.accelerationDirection = map.getFloat("accelerationDirection", 0);
-                bulletData.rdAccelerationDirection = map.getFloat("rdAccelerationDirection", 0);
-                bulletData.horizontalRatio = map.getFloat("horizontalRatio", 0);
-                bulletData.verticalRatio = map.getFloat("verticalRatio", 0);
+                if (bulletMap != null) {
+                    bulletData.life = bulletMap.getInt("life", 0);
+                    bulletData.type = bulletMap.getInt("type", 0);
+                    bulletData.scaleX = bulletMap.getFloat("scaleX", 1);
+                    bulletData.scaleY = bulletMap.getFloat("scaleY", 1);
+                    int R = bulletMap.getInt("R", 0);
+                    int G = bulletMap.getInt("G", 0);
+                    int B = bulletMap.getInt("B", 0);
+                    int A = bulletMap.getInt("A", 0);
+                    bulletData.color = new Color(R / 255f, G / 255f, B / 255f, A / 100f);
+                    bulletData.toward = bulletMap.getFloat("toward", 0);
+                    bulletData.rdToward = bulletMap.getFloat("rdToward", 0);
+                    bulletData.towardSameAsSpeedDirection = bulletMap.getBoolean("towardSameAsSpeedDirection", false);
+                    bulletData.speed = bulletMap.getFloat("speed", 0);
+                    bulletData.speedDirection = bulletMap.getFloat("speedDirection", 0);
+                    bulletData.rdSpeed = bulletMap.getFloat("rdSpeed", 0);
+                    bulletData.acceleration = bulletMap.getFloat("acceleration", 0);
+                    bulletData.rdAcceleration = bulletMap.getFloat("rdAcceleration", 0);
+                    bulletData.accelerationDirection = bulletMap.getFloat("accelerationDirection", 0);
+                    bulletData.rdAccelerationDirection = bulletMap.getFloat("rdAccelerationDirection", 0);
+                    bulletData.horizontalRatio = bulletMap.getFloat("horizontalRatio", 0);
+                    bulletData.verticalRatio = bulletMap.getFloat("verticalRatio", 0);
+                }
 
                 for (JsonValue caseGroupMap = map.getChild("bulletCaseGroups"); caseGroupMap != null; caseGroupMap = caseGroupMap.next) {
                     CaseGroupData caseGroupData = readCaseGroup(caseGroupMap);
@@ -308,7 +313,9 @@ public class NodeTreeJson {
     private void readBarrage(JsonValue map, String name, NodeTreeData nodeTreeData) {
         /* <收集者名称, 所有时间轴> */
         ArrayMap<String, Array<Timeline>> timelineMap = new ArrayMap<String, Array<Timeline>>();
-        float duration = 0; // TODO: 计算弹幕时长
+        float duration = 0;
+
+        duration = map.getFloat("duration");
 
         // Valid Pipes
         for (JsonValue pipeMap = map.getChild("pipes"); pipeMap != null; pipeMap = pipeMap.next) {

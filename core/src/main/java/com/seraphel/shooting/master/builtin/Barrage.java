@@ -25,14 +25,13 @@ public class Barrage {
     /**
      * 当前弹幕的持续时间
      */
-    public float duration;
+    private final float duration;
 
     public Barrage(String name, ArrayMap<String, Array<Timeline>> timelineMap, float duration) {
         if (name == null)
             throw new IllegalArgumentException("name cannot be null");
         this.name = name;
         this.timelineMap = timelineMap;
-        ;
         this.duration = duration;
         if (timelineMap.size > 0)
             setTimelines(timelineMap.getValueAt(0)); // 默认使用第一个发射器收集者
@@ -42,5 +41,9 @@ public class Barrage {
         if (timelines == null)
             throw new IllegalArgumentException("timelines cannot be null");
         this.timelines = timelines;
+    }
+
+    public float getDuration() {
+        return duration;
     }
 }

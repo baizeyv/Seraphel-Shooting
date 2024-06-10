@@ -12,4 +12,6 @@ public interface Projectile {
 
     public float duration = 0;
 
+    void applyTransform(float delta);
+
 }

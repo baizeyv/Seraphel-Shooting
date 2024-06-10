@@ -1,5 +1,6 @@
 package com.seraphel.shooting.master.actor;
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.seraphel.shooting.constant.Asset;
 import com.seraphel.shooting.master.builtin.BarrageState;
@@ -20,7 +21,7 @@ public class TestActor extends Actor {
         BarrageStateData barrageStateData = new BarrageStateData(data);
         state = new BarrageState(barrageStateData);
 
-        state.play("main", false);
+        state.play("main", true);
 /*
         NodeTreeData nodeTreeData = new NodeTreeData();
         nodeTreeData.name = "TestName";
@@ -52,6 +53,7 @@ public class TestActor extends Actor {
 
         state.play("main", false);
 */
+        debug();
     }
 
     @Override
@@ -60,5 +62,11 @@ public class TestActor extends Actor {
         state.apply();
         super.act(delta);
         nodeTree.updateWorldTransform();
+    }
+
+    @Override
+    public void drawDebug(ShapeRenderer shapes) {
+        super.drawDebug(shapes);
+        nodeTree.drawDebug(shapes);
     }
 }

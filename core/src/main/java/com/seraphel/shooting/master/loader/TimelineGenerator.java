@@ -24,7 +24,7 @@ public class TimelineGenerator {
         int shootFrameCount = (emitter.ref.endTime - emitter.ref.startTime) / emitter.ref.cycle;
         EventTimeline shootTimeline = new EventTimeline(shootFrameCount);
         for (int i = emitter.ref.startTime + emitter.ref.cycle, j = 0; i <= emitter.ref.endTime; i += emitter.ref.cycle, j++) {
-            shootTimeline.setFrame(j, new Event(i * Constant.STANDARD_FRAME_TIME, new EventData("ShootEvent-" + (j + 1))));
+            shootTimeline.setFrame(j, new Event(i * Constant.STANDARD_FRAME_TIME, new EventData("ShootEvent-" + (j + 1)), emitter.shootActuator));
         }
         res.add(shootTimeline);
         return res;
@@ -37,7 +37,7 @@ public class TimelineGenerator {
             EventData eventData = nodeTreeData.findEvent(eventMap.getString("name"));
             if (eventData == null)
                 throw new SerializationException("event not found");
-            Event event = new Event(eventMap.getFloat("time", 0), eventData);
+            Event event = new Event(eventMap.getFloat("time", 0), eventData, null);
             timeline.setFrame(frameIndex++, event);
         }
         return timeline;

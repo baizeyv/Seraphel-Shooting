@@ -1,5 +1,7 @@
 package com.seraphel.shooting.master.builtin;
 
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.OrderedMap;
 
 public class LauncherCollector {
@@ -34,6 +36,16 @@ public class LauncherCollector {
         lookup.set(pipeIndex, name);
         LauncherEntry entry = launchers.get(lookup);
         return entry != null ? entry.launcher : null;
+    }
+
+    public Array<Launcher> getAllLauncher() {
+        Array<Launcher> res = new Array<>();
+        for (ObjectMap.Entry<LauncherEntry, LauncherEntry> entry : launchers) {
+            if (entry.key != null && entry.key.launcher != null) {
+                res.add(entry.key.launcher);
+            }
+        }
+        return res;
     }
 
     public static class LauncherEntry {

@@ -1,11 +1,7 @@
-package com.seraphel.shooting.master;
+package com.seraphel.shooting.master.builtin;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.seraphel.shooting.master.builtin.Event;
-import com.seraphel.shooting.master.builtin.ProjectileState;
-import com.seraphel.shooting.master.builtin.ProjectileStateListener;
-import com.seraphel.shooting.master.builtin.TrackItem;
 import com.seraphel.shooting.master.builtin.enumerate.EventType;
 
 public class ProjectileEventQueue {

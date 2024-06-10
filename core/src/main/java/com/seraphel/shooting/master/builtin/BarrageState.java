@@ -155,7 +155,7 @@ public class BarrageState {
         entry.trackEnd = Float.MAX_VALUE;
 
         entry.barrageStart = 0;
-        entry.barrageEnd = barrage.duration;
+        entry.barrageEnd = barrage.getDuration();
         entry.barrageLast = -1;
         entry.nextBarrageLast = -1;
         return entry;

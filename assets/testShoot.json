@@ -4,12 +4,13 @@
     },
     "nodes": [
         {
-            "name": "root"
+            "name": "root",
+            "x": 200
         },
         {
             "name": "testNode",
-            "x": 100,
-            "y": 100,
+            "x": 600,
+            "y": 500,
             "rotation": 0,
             "scaleX": 1,
             "scaleY": 1,
@@ -42,7 +43,21 @@
                         "endTime": 6000,
                         "shootX": 300,
                         "shootY": 200,
-                        "cycle": 30
+                        "cycle": 5,
+                        "angle": 45,
+                        "radius": 200,
+                        "radiusDegree": 30,
+                        "range": 180,
+                        "count": 5,
+                        "bullet": {
+                            "speed": 300,
+                            "scaleX": 1,
+                            "towardSameAsSpeedDirection": true,
+                            "R": 254,
+                            "G": 115,
+                            "B": 97,
+                            "A": 100
+                        }
                     }
                 }
             }
@@ -76,6 +91,7 @@
     },
     "barrages": {
         "main": {
+            "duration": 20,
             "pipes": [
                 "testPipe"
             ],

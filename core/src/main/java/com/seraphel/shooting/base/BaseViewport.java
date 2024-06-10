@@ -1,6 +1,7 @@
 package com.seraphel.shooting.base;
 
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.seraphel.shooting.constant.Log;
 
 public class BaseViewport extends ExtendViewport {
 
@@ -17,7 +18,7 @@ public class BaseViewport extends ExtendViewport {
     @Override
     public void update(int screenWidth, int screenHeight, boolean centerCamera) {
         super.update(screenWidth, screenHeight, centerCamera);
-        System.out.println("VIEWPORT -> " + getWorldWidth() + " " + getWorldHeight() + " " + getMinWorldWidth() + " " + getMinWorldHeight());
+        Log.info("Viewport -> worldWidth: " + getWorldWidth() + ", worldHeight: " + getWorldHeight() + ", minWorldWidth: " + getMinWorldWidth() + ", minWorldHeight: " + getMinWorldHeight());
         scaleX = getWorldWidth() / getMinWorldWidth();
         scaleY = getWorldHeight() / getMinWorldHeight();
         scale = Math.max(scaleX, scaleY);

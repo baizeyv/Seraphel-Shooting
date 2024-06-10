@@ -1,9 +1,11 @@
 package com.seraphel.shooting.master.builtin;
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 import com.seraphel.shooting.master.builtin.data.NodeData;
 import com.seraphel.shooting.master.builtin.data.NodeTreeData;
 import com.seraphel.shooting.master.builtin.data.PipeData;
+import com.seraphel.shooting.master.extend.Emitter;
 
 public class NodeTree {
 
@@ -15,7 +17,7 @@ public class NodeTree {
 
     public Array<Pipe> drawOrder;
 
-    public LauncherCollector componentCollector;
+    public LauncherCollector launcherCollector;
 
     public float scaleX = 1, scaleY = 1;
 
@@ -47,6 +49,16 @@ public class NodeTree {
             pipes.add(pipe);
             drawOrder.add(pipe);
         }
+
+        Array<Launcher> launchers = new Array<>();
+        if (launcherCollector != null) {
+            launchers = launcherCollector.getAllLauncher();
+        } else if (data.defaultCollector != null) {
+            launchers = data.defaultCollector.getAllLauncher();
+        }
+        for (Launcher launcher : launchers) {
+            launcher.setupEntity(this);
+        }
     }
 
     public void updateWorldTransform() {
@@ -56,24 +68,50 @@ public class NodeTree {
         }
     }
 
-    public Launcher getComponent(String pipeName, String componentName) {
+    public Launcher getLauncher(String pipeName, String launcherName) {
         PipeData pipe = data.findPipe(pipeName);
         if (pipe == null)
             throw new IllegalArgumentException("Pipe " + pipeName + " not found");
-        return getComponent(pipe.index, componentName);
+        return getLauncher(pipe.index, launcherName);
     }
 
-    public Launcher getComponent(int pipeIndex, String componentName) {
-        if (componentName == null)
+    public Launcher getLauncher(int pipeIndex, String launcherName) {
+        if (launcherName == null)
             throw new IllegalArgumentException("componentName cannot be null");
-        if (componentCollector != null) {
-            Launcher launcher = componentCollector.getLauncher(pipeIndex, componentName);
+        if (launcherCollector != null) {
+            Launcher launcher = launcherCollector.getLauncher(pipeIndex, launcherName);
             if (launcher != null)
                 return launcher;
         }
         if (data.defaultCollector != null)
-            return data.defaultCollector.getLauncher(pipeIndex, componentName);
+            return data.defaultCollector.getLauncher(pipeIndex, launcherName);
         return null;
+    }
+
+    public Node findNode(String nodeName) {
+        if (nodeName == null)
+            throw new IllegalArgumentException("nodeName cannot be null");
+        Array<Node> nodes = this.nodes;
+        for (int i = 0, n = nodes.size; i < n; i++) {
+            Node node = nodes.get(i);
+            if (node.data.name.equals(nodeName))
+                return node;
+        }
+        return null;
+    }
+
+    public void drawDebug(ShapeRenderer shapes) {
+        Array<Launcher> launchers = new Array<>();
+        if (launcherCollector != null) {
+            launchers = launcherCollector.getAllLauncher();
+        } else if (data.defaultCollector != null) {
+            launchers = data.defaultCollector.getAllLauncher();
+        }
+        for (Launcher launcher : launchers) {
+            if (launcher instanceof Emitter) {
+                ((Emitter) launcher).drawDebug(shapes);
+            }
+        }
     }
 
 }

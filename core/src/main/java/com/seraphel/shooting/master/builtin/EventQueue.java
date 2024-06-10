@@ -1,7 +1,7 @@
 package com.seraphel.shooting.master.builtin;
 
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.TimeUtils;
+import com.seraphel.shooting.constant.Log;
 import com.seraphel.shooting.master.builtin.enumerate.EventType;
 
 public class EventQueue {
@@ -67,45 +67,51 @@ public class EventQueue {
         for (int i = 0; i < objects.size; i += 2) {
             EventType type = (EventType) objects.get(i);
             TrackEntry entry = (TrackEntry) objects.get(i + 1);
-            System.out.println(type.name() + " listener . " + TimeUtils.millis());
             switch (type) {
                 case start:
+                    Log.debug("Trigger [" + type.name() + "]");
                     if (entry.listener != null)
                         entry.listener.start(entry);
                     for (int ii = 0; ii < listeners.size; ii ++)
                         listeners.get(ii).start(entry);
                     break;
                 case interrupt:
+                    Log.debug("Trigger [" + type.name() + "]");
                     if (entry.listener != null)
                         entry.listener.start(entry);
                     for (int ii = 0; ii < listeners.size; ii ++)
                         listeners.get(ii).interrupt(entry);
                     break;
                 case pause:
+                    Log.debug("Trigger [" + type.name() + "]");
                     if (entry.listener != null)
                         entry.listener.start(entry);
                     for (int ii = 0; ii < listeners.size; ii ++)
                         listeners.get(ii).pause(entry);
                     break;
                 case restore:
+                    Log.debug("Trigger [" + type.name() + "]");
                     if (entry.listener != null)
                         entry.listener.start(entry);
                     for (int ii = 0; ii < listeners.size; ii ++)
                         listeners.get(ii).restore(entry);
                     break;
                 case end:
+                    Log.debug("Trigger [" + type.name() + "]");
                     if (entry.listener != null)
                         entry.listener.start(entry);
                     for (int ii = 0; ii < listeners.size; ii ++)
                         listeners.get(ii).end(entry);
                     break;
                 case dispose:
+                    Log.debug("Trigger [" + type.name() + "]");
                     if (entry.listener != null)
                         entry.listener.start(entry);
                     for (int ii = 0; ii < listeners.size; ii ++)
                         listeners.get(ii).dispose(entry);
                     break;
                 case complete:
+                    Log.debug("Trigger [" + type.name() + "]");
                     if (entry.listener != null)
                         entry.listener.start(entry);
                     for (int ii = 0; ii < listeners.size; ii ++)
@@ -113,6 +119,8 @@ public class EventQueue {
                     break;
                 case event:
                     Event event = (Event) objects.get(i++ + 2);
+                    Log.debug("Trigger [" + type.name() + "] eventName: " + event.getName());
+                    event.execute();
                     if (entry.listener != null)
                         entry.listener.event(entry, event);
                     for (int ii = 0; ii < listeners.size; ii ++)
