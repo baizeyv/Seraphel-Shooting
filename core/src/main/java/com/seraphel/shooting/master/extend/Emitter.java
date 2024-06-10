@@ -87,6 +87,8 @@ public class Emitter implements Launcher {
             testBulletActor.setOrigin(Align.center);
             testBulletActor.setPosition(baseX, baseY, Align.center);
             testBulletActor.applyScale();
+            testBulletActor.applyRotation();
+            testBulletActor.applyColor();
             BaseScreen bs = (BaseScreen) SeraphelGame.ins.getScreen();
             bs.addActor(testBulletActor);
         }

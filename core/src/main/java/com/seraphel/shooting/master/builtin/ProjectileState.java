@@ -53,7 +53,7 @@ public class ProjectileState {
 
         } else {
             float projectileLast = current.projectileLast, projectileTime = current.getProjectileTime();
-            for (Timeline timeline : current.projectile.timelines) {
+            for (Timeline timeline : current.projectile.timelines()) {
                 if (timeline instanceof EventTimeline) {
                     ((EventTimeline) timeline).setFiredEvents(events);
                     timeline.call(projectileLast, projectileTime);
@@ -90,7 +90,7 @@ public class ProjectileState {
         boolean complete;
         complete = projectileTime >= projectileEnd && item.projectileLast < projectileEnd;
         if (complete) {
-            for (Timeline timeline : item.projectile.timelines) {
+            for (Timeline timeline : item.projectile.timelines()) {
                 timeline.verify(item.projectileLast, projectileTime, false);
             }
             queue.complete(item);
@@ -132,10 +132,15 @@ public class ProjectileState {
         item.trackEnd = Float.MAX_VALUE;
 
         item.projectileStart = 0;
-        item.projectileEnd = projectile.duration;
+        item.projectileEnd = projectile.duration();
         item.projectileLast = -1;
         item.nextProjectileLast = -1;
         return item;
+    }
+
+    public void updateTrack(float duration) {
+        if (track != null)
+            track.projectileEnd = duration;
     }
 
 }

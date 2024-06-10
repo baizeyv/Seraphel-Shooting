@@ -8,10 +8,10 @@ import com.seraphel.shooting.master.builtin.timeline.Timeline;
  */
 public interface Projectile {
 
-    public Array<Timeline> timelines = new Array<Timeline>();
-
-    public float duration = 0;
+    Array<Timeline> timelines();
 
     void applyTransform(float delta);
+
+    float duration();
 
 }
