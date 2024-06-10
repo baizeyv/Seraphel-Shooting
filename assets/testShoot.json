@@ -44,11 +44,11 @@
                         "shootX": 300,
                         "shootY": 200,
                         "cycle": 5,
-                        "angle": 45,
-                        "radius": 200,
-                        "radiusDegree": 30,
-                        "range": 180,
-                        "count": 5,
+                        "angle": 0,
+                        "radius": 0,
+                        "radiusDegree": 0,
+                        "range": 360,
+                        "count": 1,
                         "bullet": {
                             "speed": 300,
                             "scaleX": 1,
@@ -57,7 +57,11 @@
                             "G": 115,
                             "B": 97,
                             "A": 100,
-                            "life": 50
+                            "life": 50,
+                            "acceleration": 12,
+                            "accelerationDirection": 90,
+                            "horizontalRatio": 2,
+                            "verticalRatio": 3
                         }
                     }
                 }

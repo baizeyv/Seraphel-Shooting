@@ -21,6 +21,8 @@ public class TestBulletActor extends SpriteActor implements Projectile {
 
     private final Array<Timeline> timelines = new Array<>();
 
+    private float speedX, speedY;
+
     public TestBulletActor(String atlasPath, String regionName, BulletData data, Emitter emitter) {
         super(atlasPath, regionName);
         this.data = data;
@@ -44,6 +46,9 @@ public class TestBulletActor extends SpriteActor implements Projectile {
         timelines.add(lifeTimeline);
 
         state.play(this);
+        /* ------------------------------------------------------------------------------------------- */
+        speedX = data.speed * MathUtils.cosDeg(data.speedDirection) * data.horizontalRatio;
+        speedY = data.speed * MathUtils.sinDeg(data.speedDirection) * data.verticalRatio;
     }
 
     @Override
@@ -63,8 +68,10 @@ public class TestBulletActor extends SpriteActor implements Projectile {
     @Override
     public void applyTransform(float delta) {
         // 位移变换
-        float speedX = data.speed * MathUtils.cosDeg(data.speedDirection);
-        float speedY = data.speed * MathUtils.sinDeg(data.speedDirection);
+        float accelerationX = data.acceleration * MathUtils.cosDeg(data.accelerationDirection) * data.horizontalRatio;
+        float accelerationY = data.acceleration * MathUtils.sinDeg(data.accelerationDirection) * data.verticalRatio;
+        speedX += accelerationX * (delta / Constant.STANDARD_FRAME_TIME);
+        speedY += accelerationY * (delta / Constant.STANDARD_FRAME_TIME);
         moveBy(speedX * delta, speedY * delta);
         /* ------------------------------------------------------------- */
         // 角度变换

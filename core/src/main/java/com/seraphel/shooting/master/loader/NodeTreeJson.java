@@ -220,8 +220,8 @@ public class NodeTreeJson {
                     bulletData.rdAcceleration = bulletMap.getFloat("rdAcceleration", 0);
                     bulletData.accelerationDirection = bulletMap.getFloat("accelerationDirection", 0);
                     bulletData.rdAccelerationDirection = bulletMap.getFloat("rdAccelerationDirection", 0);
-                    bulletData.horizontalRatio = bulletMap.getFloat("horizontalRatio", 0);
-                    bulletData.verticalRatio = bulletMap.getFloat("verticalRatio", 0);
+                    bulletData.horizontalRatio = bulletMap.getFloat("horizontalRatio", 1);
+                    bulletData.verticalRatio = bulletMap.getFloat("verticalRatio", 1);
                 }
 
                 for (JsonValue caseGroupMap = map.getChild("bulletCaseGroups"); caseGroupMap != null; caseGroupMap = caseGroupMap.next) {
