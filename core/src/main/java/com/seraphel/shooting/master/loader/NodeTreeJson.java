@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.*;
 import com.seraphel.shooting.master.builtin.Barrage;
 import com.seraphel.shooting.master.builtin.Launcher;
 import com.seraphel.shooting.master.builtin.LauncherCollector;
+import com.seraphel.shooting.master.builtin.TimelinePriority;
 import com.seraphel.shooting.master.builtin.data.EventData;
 import com.seraphel.shooting.master.builtin.data.NodeData;
 import com.seraphel.shooting.master.builtin.data.NodeTreeData;
@@ -23,6 +24,9 @@ public class NodeTreeJson {
     /* key -> collector name | value -> <launcher name, timeline array> */
     private final ArrayMap<String, ArrayMap<String, Array<Timeline>>> launcherTimelines = new ArrayMap<String, ArrayMap<String, Array<Timeline>>>();
 
+    /* key -> collector name | value -> <launcher name, Launcher launcher> */
+    private final ArrayMap<String, ArrayMap<String, Launcher>> collectorLaunchers = new ArrayMap<>();
+
     private void putLauncherTimeline(String collectorName, String launcherName, Array<Timeline> timelines) {
         if (launcherTimelines.containsKey(collectorName)) {
             ArrayMap<String, Array<Timeline>> map = launcherTimelines.get(collectorName);
@@ -34,12 +38,32 @@ public class NodeTreeJson {
         }
     }
 
+    private void putLauncher(String collectorName, String launcherName, Launcher launcher) {
+        if (collectorLaunchers.containsKey(collectorName)) {
+            ArrayMap<String, Launcher> map = collectorLaunchers.get(collectorName);
+            map.put(launcherName, launcher);
+        } else {
+            ArrayMap<String, Launcher> map = new ArrayMap<>();
+            map.put(launcherName, launcher);
+            collectorLaunchers.put(collectorName, map);
+        }
+    }
+
     private Array<Timeline> getLauncherTimeline(String collectorName, String launcherName) {
         if (launcherTimelines.containsKey(collectorName)) {
             ArrayMap<String, Array<Timeline>> map = launcherTimelines.get(collectorName);
             if (map.containsKey(launcherName)) {
                 return map.get(launcherName);
             }
+        }
+        return null;
+    }
+
+    private Launcher getLauncher(String collectorName, String launcherName) {
+        if (collectorLaunchers.containsKey(collectorName)) {
+            ArrayMap<String, Launcher> map = collectorLaunchers.get(collectorName);
+            if (map.containsKey(launcherName))
+                return map.get(launcherName);
         }
         return null;
     }
@@ -236,6 +260,7 @@ public class NodeTreeJson {
                     Emitter res = new Emitter(data, collector, name);
                     Array<Timeline> timelines = TimelineGenerator.emitter(res);
                     putLauncherTimeline(collector.name, name, timelines);
+                    putLauncher(collector.name, name, res);
                     return res;
                 } catch (CloneNotSupportedException e) {
                     throw new GdxRuntimeException(e);
@@ -313,7 +338,8 @@ public class NodeTreeJson {
 
     private void readBarrage(JsonValue map, String name, NodeTreeData nodeTreeData) {
         /* <收集者名称, 所有时间轴> */
-        ArrayMap<String, Array<Timeline>> timelineMap = new ArrayMap<String, Array<Timeline>>();
+        ArrayMap<String, ArrayMap<TimelinePriority, Array<Timeline>>> timelineMap = new ArrayMap<>();
+        ArrayMap<String, Array<Timeline>> conditionTimelineMap = new ArrayMap<>();
         float duration = 0;
 
         duration = map.getFloat("duration");
@@ -328,10 +354,31 @@ public class NodeTreeJson {
             for (String collectorName : collectorNames) {
                 Array<Timeline> timelines = getLauncherTimeline(collectorName, pipeData.launcherName);
                 if (timelines != null) {
-                    if (timelineMap.containsKey(collectorName)) {
-                        timelineMap.get(collectorName).addAll(timelines);
-                    } else {
-                        timelineMap.put(collectorName, timelines);
+                    if (timelineMap.containsKey(collectorName)) { // if contains the current collector
+                        ArrayMap<TimelinePriority, Array<Timeline>> priorityMap = timelineMap.get(collectorName);
+                        if (priorityMap.containsKey(TimelinePriority.FINALLY)) {
+                            timelineMap.get(collectorName).get(TimelinePriority.FINALLY).addAll(timelines);
+                        } else {
+                            timelineMap.get(collectorName).put(TimelinePriority.FINALLY, timelines);
+                        }
+                    } else { // no contains the current collector
+                        ArrayMap<TimelinePriority, Array<Timeline>> priorityMap = new ArrayMap<>();
+                        priorityMap.put(TimelinePriority.FINALLY, timelines);
+                        timelineMap.put(collectorName, priorityMap);
+                    }
+                }
+                Launcher launcher = getLauncher(collectorName, pipeData.launcherName);
+                if (launcher != null) {
+                    // TODO:
+                    if (launcher instanceof Emitter) {
+                        Timeline conditionDetectionTimeline = TimelineGenerator.emitterConditionDetection((Emitter) launcher, duration);
+                        if (conditionTimelineMap.containsKey(collectorName)) {
+                            conditionTimelineMap.get(collectorName).add(conditionDetectionTimeline);
+                        } else {
+                            Array<Timeline> arr = new Array<>();
+                            arr.add(conditionDetectionTimeline);
+                            conditionTimelineMap.put(collectorName, arr);
+                        }
                     }
                 }
             }
@@ -360,19 +407,43 @@ public class NodeTreeJson {
             Timeline timeline = TimelineGenerator.builtinEvent(eventsMap, nodeTreeData);
             Array<String> collectorNames = nodeTreeData.getAllCollectorNames();
             for (String collectorName : collectorNames) {
-                if (timelineMap.containsKey(collectorName)) {
-                    timelineMap.get(collectorName).add(timeline);
-                } else {
+                if (timelineMap.containsKey(collectorName)) { // it contains current collector
+                    ArrayMap<TimelinePriority, Array<Timeline>> priorityMap = timelineMap.get(collectorName);
+                    if (priorityMap.containsKey(TimelinePriority.BUILTIN_EVENT)) {
+                        timelineMap.get(collectorName).get(TimelinePriority.BUILTIN_EVENT).addAll(timeline);
+                    } else {
+                        Array<Timeline> arr = new Array<>();
+                        arr.addAll(timeline);
+                        timelineMap.get(collectorName).put(TimelinePriority.BUILTIN_EVENT, arr);
+                    }
+                } else { // no contains current collector
                     Array<Timeline> arr = new Array<Timeline>();
                     arr.add(timeline);
-                    timelineMap.put(collectorName, arr);
+                    ArrayMap<TimelinePriority, Array<Timeline>> priorityMap = new ArrayMap<>();
+                    priorityMap.put(TimelinePriority.BUILTIN_EVENT, arr);
+                    timelineMap.put(collectorName, priorityMap);
                 }
             }
             duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() - 1]);
         }
 
-        for (ObjectMap.Entry<String, Array<Timeline>> arr : timelineMap) {
+        for (ObjectMap.Entry<String, ArrayMap<TimelinePriority, Array<Timeline>>> entry : timelineMap) {
+            String currentCollectorName = entry.key;
+            if (conditionTimelineMap.containsKey(currentCollectorName)) {
+                Array<Timeline> currentCondition = conditionTimelineMap.get(currentCollectorName);
+                if (entry.value.containsKey(TimelinePriority.FIRSTLY)) {
+                    entry.value.get(TimelinePriority.FIRSTLY).addAll(currentCondition);
+                } else {
+                    entry.value.put(TimelinePriority.FIRSTLY, currentCondition);
+                }
+            }
+        }
+
+        for (ObjectMap.Entry<String, ArrayMap<TimelinePriority, Array<Timeline>>> arr : timelineMap) {
             arr.value.shrink();
+            for (ObjectMap.Entry<TimelinePriority, Array<Timeline>> entry : arr.value) {
+                entry.value.shrink();
+            }
         }
         nodeTreeData.barrages.add(new Barrage(name, timelineMap, duration));
     }

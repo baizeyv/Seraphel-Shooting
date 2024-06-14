@@ -20,6 +20,7 @@ public class TestBulletActor extends SpriteActor implements Projectile {
 
     private Node node;
 
+    // TODO: 换成和发射器相同的具有优先级分别的MAP
     private final Array<Timeline> timelines = new Array<>();
 
     private final Vector2 speed = new Vector2();

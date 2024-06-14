@@ -11,7 +11,7 @@ public class BarrageState {
     /**
      * default empty barrage
      */
-    private static final Barrage emptyBarrage = new Barrage("<empty>", new ArrayMap<String, Array<Timeline>>(0), 0);
+    private static final Barrage emptyBarrage = new Barrage("<empty>", new ArrayMap<>(), 0);
 
     private BarrageStateData data;
 
@@ -65,13 +65,48 @@ public class BarrageState {
             // @attribute barrageLast 上次更新时的弹幕时间
             // @attribute barrageTime 当前弹幕的播放时间
             float barrageLast = current.barrageLast, barrageTime = current.getBarrageTime();
-            for (Timeline timeline : current.barrage.timelines) {
-                if (timeline instanceof EventTimeline) {
-                    ((EventTimeline) timeline).setFiredEvents(events);
-                    timeline.call(barrageLast, barrageTime);
-                    events = ((EventTimeline) timeline).getFiredEvents();
-                } else {
-                    timeline.call(barrageLast, barrageTime);
+            if (current.barrage.timelines.containsKey(TimelinePriority.FIRSTLY)) {
+                for (Timeline timeline : current.barrage.timelines.get(TimelinePriority.FIRSTLY)) {
+                    if (timeline instanceof EventTimeline) {
+                        ((EventTimeline) timeline).setFiredEvents(events);
+                        timeline.call(barrageLast, barrageTime);
+                        events = ((EventTimeline) timeline).getFiredEvents();
+                    } else {
+                        timeline.call(barrageLast, barrageTime);
+                    }
+                }
+            }
+            if (current.barrage.timelines.containsKey(TimelinePriority.MIDDLE)) {
+                for (Timeline timeline : current.barrage.timelines.get(TimelinePriority.MIDDLE)) {
+                    if (timeline instanceof EventTimeline) {
+                        ((EventTimeline) timeline).setFiredEvents(events);
+                        timeline.call(barrageLast, barrageTime);
+                        events = ((EventTimeline) timeline).getFiredEvents();
+                    } else {
+                        timeline.call(barrageLast, barrageTime);
+                    }
+                }
+            }
+            if (current.barrage.timelines.containsKey(TimelinePriority.FINALLY)) {
+                for (Timeline timeline : current.barrage.timelines.get(TimelinePriority.FINALLY)) {
+                    if (timeline instanceof EventTimeline) {
+                        ((EventTimeline) timeline).setFiredEvents(events);
+                        timeline.call(barrageLast, barrageTime);
+                        events = ((EventTimeline) timeline).getFiredEvents();
+                    } else {
+                        timeline.call(barrageLast, barrageTime);
+                    }
+                }
+            }
+            if (current.barrage.timelines.containsKey(TimelinePriority.BUILTIN_EVENT)) {
+                for (Timeline timeline : current.barrage.timelines.get(TimelinePriority.BUILTIN_EVENT)) {
+                    if (timeline instanceof EventTimeline) {
+                        ((EventTimeline) timeline).setFiredEvents(events);
+                        timeline.call(barrageLast, barrageTime);
+                        events = ((EventTimeline) timeline).getFiredEvents();
+                    } else {
+                        timeline.call(barrageLast, barrageTime);
+                    }
                 }
             }
             queueEvents(current, barrageTime);
@@ -105,9 +140,6 @@ public class BarrageState {
         else
             complete = barrageTime >= barrageEnd && entry.barrageLast < barrageEnd;
         if (complete) {
-            for (Timeline timeline : entry.barrage.timelines) {
-                timeline.verify(entry.barrageLast, barrageTime, entry.loop);
-            }
             queue.complete(entry);
         }
 

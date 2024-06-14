@@ -3,6 +3,7 @@ package com.seraphel.shooting.master.extend;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.seraphel.shooting.SeraphelGame;
 import com.seraphel.shooting.base.BaseScreen;
 import com.seraphel.shooting.constant.Log;
@@ -10,6 +11,8 @@ import com.seraphel.shooting.master.actor.TestBulletActor;
 import com.seraphel.shooting.master.builtin.*;
 import com.seraphel.shooting.master.builtin.data.PipeData;
 import com.seraphel.shooting.master.extend.data.BulletData;
+import com.seraphel.shooting.master.extend.data.CaseData;
+import com.seraphel.shooting.master.extend.data.CaseGroupData;
 import com.seraphel.shooting.master.extend.data.EmitterData;
 
 public class Emitter implements Launcher {
@@ -24,6 +27,7 @@ public class Emitter implements Launcher {
     private final String name;
 
     public final Executable shootActuator;
+    public final Executable conditionActuator;
     private PipeData pipeData;
     private NodeTree nodeTree;
 
@@ -39,6 +43,17 @@ public class Emitter implements Launcher {
                 try {
                     shoot();
                 } catch (CloneNotSupportedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+        /* ---------------------------------------------- */
+        conditionActuator = new Executable() {
+            @Override
+            public void execute() {
+                try {
+                    detectCondition();
+                } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -91,6 +106,18 @@ public class Emitter implements Launcher {
             testBulletActor.applyColor();
             BaseScreen bs = (BaseScreen) SeraphelGame.ins.getScreen();
             bs.addActor(testBulletActor);
+        }
+    }
+
+    /**
+     * 检测条件
+     */
+    public void detectCondition() {
+        for (CaseGroupData cgData : ref.caseGroups) {
+            // TODO:
+            for (CaseData caseData : cgData.cases) {
+
+            }
         }
     }
 

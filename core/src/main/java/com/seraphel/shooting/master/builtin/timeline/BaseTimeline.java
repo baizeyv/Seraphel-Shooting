@@ -25,11 +25,6 @@ public class BaseTimeline implements Timeline {
     }
 
     @Override
-    public void verify(float lastTime, float time, boolean loop) {
-
-    }
-
-    @Override
     public void restore() {
         System.arraycopy(originFrames, 0, frames, 0, frames.length);
     }

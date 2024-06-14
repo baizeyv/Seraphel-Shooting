@@ -30,6 +30,19 @@ public class TimelineGenerator {
         return res;
     }
 
+    public static Timeline emitterConditionDetection(Emitter emitter, float duration) {
+        // 条件检测时间轴 [Condition Timeline] 应当放在最开始
+        int unit = emitter.ref.detectionUnit;
+        float gapTime = 1f / unit;
+        int detectCount = (int) (duration / gapTime);
+
+        EventTimeline conditionTimeline = new EventTimeline(detectCount);
+        for (int i = 0; i < detectCount; i ++) {
+            conditionTimeline.setFrame(i, new Event((i + 1) * gapTime, new EventData("DetectConditionEvent-" + (i + 1)), emitter.conditionActuator));
+        }
+        return conditionTimeline;
+    }
+
     public static Timeline builtinEvent(JsonValue map, NodeTreeData nodeTreeData) {
         EventTimeline timeline = new EventTimeline(map.size);
         int frameIndex = 0;

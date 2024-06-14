@@ -90,9 +90,6 @@ public class ProjectileState {
         boolean complete;
         complete = projectileTime >= projectileEnd && item.projectileLast < projectileEnd;
         if (complete) {
-            for (Timeline timeline : item.projectile.timelines()) {
-                timeline.verify(item.projectileLast, projectileTime, false);
-            }
             queue.complete(item);
         }
 
