@@ -53,15 +53,51 @@ public class ProjectileState {
 
         } else {
             float projectileLast = current.projectileLast, projectileTime = current.getProjectileTime();
-            for (Timeline timeline : current.projectile.timelines()) {
-                if (timeline instanceof EventTimeline) {
-                    ((EventTimeline) timeline).setFiredEvents(events);
-                    timeline.call(projectileLast, projectileTime);
-                    events = ((EventTimeline) timeline).getFiredEvents();
-                } else {
-                    timeline.call(projectileLast, projectileTime);
+            if (current.projectile.timelines().containsKey(TimelinePriority.FIRSTLY)) {
+                for (Timeline timeline : current.projectile.timelines().get(TimelinePriority.FIRSTLY)) {
+                    if (timeline instanceof EventTimeline) {
+                        ((EventTimeline) timeline).setFiredEvents(events);
+                        timeline.call(projectileLast, projectileTime);
+                        events = ((EventTimeline) timeline).getFiredEvents();
+                    } else {
+                        timeline.call(projectileLast, projectileTime);
+                    }
                 }
             }
+            if (current.projectile.timelines().containsKey(TimelinePriority.MIDDLE)) {
+                for (Timeline timeline : current.projectile.timelines().get(TimelinePriority.MIDDLE)) {
+                    if (timeline instanceof EventTimeline) {
+                        ((EventTimeline) timeline).setFiredEvents(events);
+                        timeline.call(projectileLast, projectileTime);
+                        events = ((EventTimeline) timeline).getFiredEvents();
+                    } else {
+                        timeline.call(projectileLast, projectileTime);
+                    }
+                }
+            }
+            if (current.projectile.timelines().containsKey(TimelinePriority.FINALLY)) {
+                for (Timeline timeline : current.projectile.timelines().get(TimelinePriority.FINALLY)) {
+                    if (timeline instanceof EventTimeline) {
+                        ((EventTimeline) timeline).setFiredEvents(events);
+                        timeline.call(projectileLast, projectileTime);
+                        events = ((EventTimeline) timeline).getFiredEvents();
+                    } else {
+                        timeline.call(projectileLast, projectileTime);
+                    }
+                }
+            }
+            if (current.projectile.timelines().containsKey(TimelinePriority.BUILTIN_EVENT)) {
+                for (Timeline timeline : current.projectile.timelines().get(TimelinePriority.BUILTIN_EVENT)) {
+                    if (timeline instanceof EventTimeline) {
+                        ((EventTimeline) timeline).setFiredEvents(events);
+                        timeline.call(projectileLast, projectileTime);
+                        events = ((EventTimeline) timeline).getFiredEvents();
+                    } else {
+                        timeline.call(projectileLast, projectileTime);
+                    }
+                }
+            }
+
             queueEvents(current, projectileTime);
             events.clear();
             current.nextProjectileLast = projectileTime;

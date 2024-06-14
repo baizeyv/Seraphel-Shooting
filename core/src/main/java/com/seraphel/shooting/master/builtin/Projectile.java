@@ -1,6 +1,7 @@
 package com.seraphel.shooting.master.builtin;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ArrayMap;
 import com.seraphel.shooting.master.builtin.timeline.Timeline;
 
 /**
@@ -8,7 +9,7 @@ import com.seraphel.shooting.master.builtin.timeline.Timeline;
  */
 public interface Projectile {
 
-    Array<Timeline> timelines();
+    ArrayMap<TimelinePriority, Array<Timeline>> timelines();
 
     void applyTransform(float delta);
 

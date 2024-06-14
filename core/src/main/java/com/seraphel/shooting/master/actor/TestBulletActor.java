@@ -3,6 +3,7 @@ package com.seraphel.shooting.master.actor;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ArrayMap;
 import com.seraphel.shooting.actor.SpriteActor;
 import com.seraphel.shooting.master.Constant;
 import com.seraphel.shooting.master.builtin.*;
@@ -21,7 +22,7 @@ public class TestBulletActor extends SpriteActor implements Projectile {
     private Node node;
 
     // TODO: 换成和发射器相同的具有优先级分别的MAP
-    private final Array<Timeline> timelines = new Array<>();
+    private final ArrayMap<TimelinePriority, Array<Timeline>> timelines = new ArrayMap<>();
 
     private final Vector2 speed = new Vector2();
 
@@ -45,7 +46,9 @@ public class TestBulletActor extends SpriteActor implements Projectile {
         Event lifeEvent = new Event(lifeTime, lifeEventData, lifeActuator);
         lifeTimeline.setFrame(0, lifeEvent);
         /* ------------------------------------------------------------------------------------------- */
-        timelines.add(lifeTimeline);
+        Array<Timeline> arr = new Array<>();
+        arr.add(lifeTimeline);
+        timelines.put(TimelinePriority.FINALLY, arr);
 
         state.play(this);
         /* ------------------------------------------------------------------------------------------- */
@@ -63,7 +66,7 @@ public class TestBulletActor extends SpriteActor implements Projectile {
     }
 
     @Override
-    public Array<Timeline> timelines() {
+    public ArrayMap<TimelinePriority, Array<Timeline>> timelines() {
         return timelines;
     }
 
