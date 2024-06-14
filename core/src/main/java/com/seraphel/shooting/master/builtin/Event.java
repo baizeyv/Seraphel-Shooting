@@ -23,7 +23,7 @@ public class Event {
 
     public void execute() {
         if (executable != null)
-            executable.execute();
+            executable.execute(this);
     }
 
     public String getName() {

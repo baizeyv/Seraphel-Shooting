@@ -2,6 +2,6 @@ package com.seraphel.shooting.master.builtin;
 
 public interface Executable {
 
-    public void execute();
+    public void execute(Event event);
 
 }

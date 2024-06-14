@@ -38,6 +38,15 @@ public class CaseData implements Cloneable {
 
     public boolean specialRestore;
 
+    /**
+     * 检测是否达到条件
+     * @return boolean
+     */
+    public boolean detect() {
+        // TODO: args
+        return false;
+    }
+
     public Object cloneX() throws CloneNotSupportedException {
         CaseData res = (CaseData) super.clone();
         res.curve = (CurveData) this.curve.cloneX();

@@ -36,7 +36,7 @@ public class TestBulletActor extends SpriteActor implements Projectile {
         // 生命周期事件时间轴
         Executable lifeActuator = new Executable() {
             @Override
-            public void execute() {
+            public void execute(Event event) {
                 lifeEnd();
             }
         };

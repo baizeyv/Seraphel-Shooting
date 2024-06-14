@@ -3,7 +3,6 @@ package com.seraphel.shooting.master.extend;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
 import com.seraphel.shooting.SeraphelGame;
 import com.seraphel.shooting.base.BaseScreen;
 import com.seraphel.shooting.constant.Log;
@@ -39,7 +38,7 @@ public class Emitter implements Launcher {
         /* ---------------------------------------------- */
         shootActuator = new Executable() {
             @Override
-            public void execute() {
+            public void execute(Event event) {
                 try {
                     shoot();
                 } catch (CloneNotSupportedException e) {
@@ -50,9 +49,9 @@ public class Emitter implements Launcher {
         /* ---------------------------------------------- */
         conditionActuator = new Executable() {
             @Override
-            public void execute() {
+            public void execute(Event event) {
                 try {
-                    detectCondition();
+                    detectCondition(event);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -112,9 +111,9 @@ public class Emitter implements Launcher {
     /**
      * 检测条件
      */
-    public void detectCondition() {
+    public void detectCondition(Event event) {
         for (CaseGroupData cgData : ref.caseGroups) {
-            // TODO:
+            // TODO: 事件间隔及间隔增量的实现
             for (CaseData caseData : cgData.cases) {
 
             }
