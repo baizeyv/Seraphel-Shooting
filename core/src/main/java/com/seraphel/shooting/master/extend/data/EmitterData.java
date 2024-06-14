@@ -8,6 +8,9 @@ public class EmitterData implements Cloneable {
 
     public int layerId;
 
+    /* 条件检测的单位, for example: 60 -> 1/60s 处理一次 */
+    public int detectionUnit;
+
     /* 绑定到的发射器的ID, 这种形式的绑定相当于在bindToId的发射器发射的子弹上都放一个当前的发射器 */
     public int bindToId;
 

@@ -35,6 +35,7 @@
                         "name": "testEmitter",
                         "id": 0,
                         "layerId": 0,
+                        "detectionUnit": 60,
                         "bindToId": -1,
                         "deepBind": false,
                         "x": 0,

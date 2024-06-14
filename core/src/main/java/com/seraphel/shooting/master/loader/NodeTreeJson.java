@@ -158,6 +158,7 @@ public class NodeTreeJson {
                 EmitterData data = new EmitterData();
                 data.id = map.getInt("id", 0);
                 data.layerId = map.getInt("layerId", 0);
+                data.detectionUnit = map.getInt("detectionUnit", 60);
                 data.bindToId = map.getInt("bindToId", -1);
                 data.deepBind = map.getBoolean("deepBind", false);
                 data.relativeDirection = map.getBoolean("relativeDirection", false);
