@@ -3,6 +3,7 @@ package com.seraphel.shooting.master.extend;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.ArrayMap;
 import com.seraphel.shooting.SeraphelGame;
 import com.seraphel.shooting.base.BaseScreen;
 import com.seraphel.shooting.constant.Log;
@@ -13,6 +14,7 @@ import com.seraphel.shooting.master.extend.data.BulletData;
 import com.seraphel.shooting.master.extend.data.CaseData;
 import com.seraphel.shooting.master.extend.data.CaseGroupData;
 import com.seraphel.shooting.master.extend.data.EmitterData;
+import com.seraphel.shooting.master.extend.enumerate.PropertyType;
 
 public class Emitter implements Launcher {
 
@@ -26,9 +28,22 @@ public class Emitter implements Launcher {
     private final String name;
 
     public final Executable shootActuator;
+
     public final Executable conditionActuator;
+
     private PipeData pipeData;
+
     private NodeTree nodeTree;
+
+    /**
+     * 条件MAP
+     */
+    private final ArrayMap<PropertyType, Float> conditionMap = new ArrayMap<>();
+
+    /**
+     * 结果MAP
+     */
+    private final ArrayMap<PropertyType, Float> resultMap = new ArrayMap<>();
 
     public Emitter(EmitterData data, LauncherCollector collector, String name) throws CloneNotSupportedException {
         this.data = data;
