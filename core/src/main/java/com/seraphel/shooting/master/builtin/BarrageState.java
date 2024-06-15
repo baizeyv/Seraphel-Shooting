@@ -11,7 +11,7 @@ public class BarrageState {
     /**
      * default empty barrage
      */
-    private static final Barrage emptyBarrage = new Barrage("<empty>", new ArrayMap<>(), 0);
+    private static final Barrage emptyBarrage = new Barrage("<empty>", new ArrayMap<>(), 0, new ArrayMap<>());
 
     private BarrageStateData data;
 
@@ -171,6 +171,7 @@ public class BarrageState {
         queue.start(entry);
         this.track = entry;
         queue.drain();
+        barrage.bindLauncher();
         return entry;
     }
 

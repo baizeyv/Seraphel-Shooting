@@ -1,0 +1,319 @@
+{
+    "ID": "00504020-cdb5-4f64-9b8b-8773dd55e5e1",
+    "Version": "3.10.0.0",
+    "Name": "Debug",
+    "Content": {
+        "Content": {
+            "Animation": {
+                "Duration": 0,
+                "Speed": 1.0,
+                "Timelines": [],
+                "ctype": "TimelineActionData"
+            },
+            "AnimationList": [],
+            "ObjectData": {
+                "Tag": 2,
+                "Children": [
+                    {
+                        "FileData": {
+                            "Type": "MarkedSubImage",
+                            "Path": "Debug/background.png",
+                            "Plist": "plist/Debug.plist"
+                        },
+                        "BlendFunc": {
+                            "Src": 770,
+                            "Dst": 771
+                        },
+                        "AnchorPoint": {
+                            "ScaleX": 0.5,
+                            "ScaleY": 0.5
+                        },
+                        "Position": {
+                            "X": 960.0,
+                            "Y": 540.0
+                        },
+                        "Scale": {
+                            "ScaleX": 1.0,
+                            "ScaleY": 1.0
+                        },
+                        "CColor": {},
+                        "IconVisible": false,
+                        "PrePosition": {
+                            "X": 0.5,
+                            "Y": 0.5
+                        },
+                        "PreSize": {
+                            "X": 0.024,
+                            "Y": 0.0426
+                        },
+                        "LeftMargin": 937.0,
+                        "RightMargin": 937.0,
+                        "TopMargin": 517.0,
+                        "BottomMargin": 517.0,
+                        "Tag": 9,
+                        "ActionTag": -1470770604,
+                        "Size": {
+                            "X": 1920.0,
+                            "Y": 1080.0
+                        },
+                        "Name": "Background",
+                        "ctype": "SpriteObjectData"
+                    },
+                    {
+                        "ClipAble": false,
+                        "BackColorAlpha": 0,
+                        "ComboBoxIndex": 1,
+                        "SingleColor": {
+                            "R": 150,
+                            "G": 200
+                        },
+                        "FirstColor": {
+                            "R": 150,
+                            "G": 200
+                        },
+                        "EndColor": {},
+                        "ColorVector": {
+                            "ScaleY": 1.0
+                        },
+                        "Scale9Width": 1,
+                        "Scale9Height": 1,
+                        "TouchEnable": true,
+                        "AnchorPoint": {
+                            "ScaleX": 0.5,
+                            "ScaleY": 0.5
+                        },
+                        "Position": {
+                            "X": 960.0,
+                            "Y": 540.0
+                        },
+                        "Scale": {
+                            "ScaleX": 1.0,
+                            "ScaleY": 1.0
+                        },
+                        "CColor": {},
+                        "IconVisible": false,
+                        "PrePosition": {
+                            "X": 0.5,
+                            "Y": 0.5
+                        },
+                        "PreSize": {
+                            "X": 1.0,
+                            "Y": 1.0
+                        },
+                        "Tag": 7,
+                        "ActionTag": 841110627,
+                        "Size": {
+                            "X": 1920.0,
+                            "Y": 1080.0
+                        },
+                        "Name": "Center",
+                        "ctype": "PanelObjectData"
+                    },
+                    {
+                        "ClipAble": false,
+                        "BackColorAlpha": 0,
+                        "ComboBoxIndex": 1,
+                        "SingleColor": {
+                            "R": 150,
+                            "G": 200
+                        },
+                        "FirstColor": {
+                            "R": 150,
+                            "G": 200
+                        },
+                        "EndColor": {},
+                        "ColorVector": {
+                            "ScaleY": 1.0
+                        },
+                        "TouchEnable": true,
+                        "AnchorPoint": {
+                            "ScaleX": 0.5,
+                            "ScaleY": 0.5
+                        },
+                        "Position": {
+                            "X": 960.0,
+                            "Y": 540.0
+                        },
+                        "Scale": {
+                            "ScaleX": 1.0,
+                            "ScaleY": 1.0
+                        },
+                        "CColor": {},
+                        "IconVisible": false,
+                        "PrePosition": {
+                            "X": 0.5,
+                            "Y": 0.5
+                        },
+                        "PreSize": {
+                            "X": 1.0,
+                            "Y": 1.0
+                        },
+                        "Tag": 5,
+                        "Children": [
+                            {
+                                "LabelText": "Render Calls:",
+                                "LabelBMFontFile_CNB": {
+                                    "Type": "Normal",
+                                    "Path": "fnt/RecMono.fnt",
+                                    "Plist": ""
+                                },
+                                "AnchorPoint": {
+                                    "ScaleY": 0.5
+                                },
+                                "Position": {
+                                    "X": 20.0,
+                                    "Y": 1035.0
+                                },
+                                "Scale": {
+                                    "ScaleX": 1.0,
+                                    "ScaleY": 1.0
+                                },
+                                "CColor": {
+                                    "R": 142,
+                                    "G": 252,
+                                    "B": 171
+                                },
+                                "IconVisible": false,
+                                "PrePosition": {
+                                    "X": 0.0104,
+                                    "Y": 0.9583
+                                },
+                                "PreSize": {
+                                    "X": 0.1271,
+                                    "Y": 0.0361
+                                },
+                                "LeftMargin": 20.0,
+                                "RightMargin": 1656.0,
+                                "TopMargin": 25.5,
+                                "BottomMargin": 1015.5,
+                                "Tag": 4,
+                                "ActionTag": 693979478,
+                                "Size": {
+                                    "X": 244.0,
+                                    "Y": 39.0
+                                },
+                                "Name": "RenderCalls",
+                                "ctype": "TextBMFontObjectData"
+                            }
+                        ],
+                        "ActionTag": -232192396,
+                        "Size": {
+                            "X": 1920.0,
+                            "Y": 1080.0
+                        },
+                        "Name": "Top",
+                        "ctype": "PanelObjectData"
+                    },
+                    {
+                        "ClipAble": false,
+                        "BackColorAlpha": 0,
+                        "ComboBoxIndex": 1,
+                        "SingleColor": {
+                            "R": 150,
+                            "G": 200
+                        },
+                        "FirstColor": {
+                            "R": 150,
+                            "G": 200
+                        },
+                        "EndColor": {},
+                        "ColorVector": {
+                            "ScaleY": 1.0
+                        },
+                        "TouchEnable": true,
+                        "AnchorPoint": {
+                            "ScaleX": 0.5,
+                            "ScaleY": 0.5
+                        },
+                        "Position": {
+                            "X": 960.0,
+                            "Y": 540.0
+                        },
+                        "Scale": {
+                            "ScaleX": 1.0,
+                            "ScaleY": 1.0
+                        },
+                        "CColor": {},
+                        "IconVisible": false,
+                        "PrePosition": {
+                            "X": 0.5,
+                            "Y": 0.5
+                        },
+                        "PreSize": {
+                            "X": 1.0,
+                            "Y": 1.0
+                        },
+                        "Tag": 6,
+                        "Children": [
+                            {
+                                "LabelText": "FPS:",
+                                "LabelBMFontFile_CNB": {
+                                    "Type": "Normal",
+                                    "Path": "fnt/RecMono.fnt",
+                                    "Plist": ""
+                                },
+                                "AnchorPoint": {
+                                    "ScaleY": 0.5
+                                },
+                                "Position": {
+                                    "X": 20.0,
+                                    "Y": 35.0
+                                },
+                                "Scale": {
+                                    "ScaleX": 1.0,
+                                    "ScaleY": 1.0
+                                },
+                                "CColor": {
+                                    "G": 220,
+                                    "B": 248
+                                },
+                                "IconVisible": false,
+                                "PrePosition": {
+                                    "X": 0.0104,
+                                    "Y": 0.0324
+                                },
+                                "PreSize": {
+                                    "X": 0.038,
+                                    "Y": 0.0361
+                                },
+                                "LeftMargin": 20.0,
+                                "RightMargin": 1827.0,
+                                "TopMargin": 1025.5,
+                                "BottomMargin": 15.5,
+                                "Tag": 8,
+                                "ActionTag": 889528319,
+                                "Size": {
+                                    "X": 73.0,
+                                    "Y": 39.0
+                                },
+                                "Name": "Fps",
+                                "ctype": "TextBMFontObjectData"
+                            }
+                        ],
+                        "ActionTag": -146721256,
+                        "Size": {
+                            "X": 1920.0,
+                            "Y": 1080.0
+                        },
+                        "Name": "Bottom",
+                        "ctype": "PanelObjectData"
+                    }
+                ],
+                "Size": {
+                    "X": 1920.0,
+                    "Y": 1080.0
+                },
+                "Name": "Layer",
+                "ctype": "LayerObjectData"
+            },
+            "UsedResources": [
+                "fnt/RecMono.fnt",
+                "fnt/RecMono.png",
+                "plist/Debug.plist",
+                "plist/Debug.png"
+            ],
+            "ctype": "GameFileData"
+        }
+    },
+    "Type": "Layer"
+}

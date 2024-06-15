@@ -218,7 +218,7 @@ public class NodeTreeJson {
                 data.disappearEffect = map.getBoolean("disappearEffect", false);
                 data.tailEffect = map.getBoolean("tailEffect", false);
 
-                for (JsonValue caseGroupMap = map.getChild("emitterCaseGroups"); caseGroupMap != null; caseGroupMap = caseGroupMap.next) {
+                for (JsonValue caseGroupMap = map.get("emitterCaseGroups"); caseGroupMap != null; caseGroupMap = caseGroupMap.next) {
                     CaseGroupData caseGroupData = readCaseGroup(caseGroupMap);
                     data.caseGroups.add(caseGroupData);
                 }
@@ -316,6 +316,7 @@ public class NodeTreeJson {
             if (ct != -1)
                 caseData.changeType = ChangeType.values()[ct];
 
+            caseData.resultValue = caseDataMap.getString("resultValue", null);
             caseData.loopTimes = caseDataMap.getInt("loopTimes", 0);
             caseData.specialShoot = caseDataMap.getBoolean("specialShoot", false);
             caseData.specialRestore = caseDataMap.getBoolean("specialRestore", false);
@@ -326,6 +327,15 @@ public class NodeTreeJson {
 
     private CurveData readCurve(JsonValue curveMap) {
         CurveData data = new CurveData();
+
+        if (curveMap == null) {
+            data.time = 0;
+            data.curveStartX = 0;
+            data.curveStartY = 0;
+            data.curveEndX = 1;
+            data.curveEndY = 1;
+            return data;
+        }
 
         data.time = curveMap.getFloat("time", 0);
         data.curveStartX = curveMap.getFloat("startX", 0);
@@ -445,7 +455,7 @@ public class NodeTreeJson {
                 entry.value.shrink();
             }
         }
-        nodeTreeData.barrages.add(new Barrage(name, timelineMap, duration));
+        nodeTreeData.barrages.add(new Barrage(name, timelineMap, duration, collectorLaunchers));
     }
 
 }

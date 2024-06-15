@@ -14,4 +14,6 @@ public class Constant {
      */
     public static float SPECIAL_OTHER = -99999F;
 
+    public static float STANDARD_FRAME_TIME_60 = 0.016665f;
+
 }

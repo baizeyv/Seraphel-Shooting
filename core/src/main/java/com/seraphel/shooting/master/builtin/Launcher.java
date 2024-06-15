@@ -8,4 +8,6 @@ public interface Launcher {
 
     public void setupEntity(NodeTree nodeTree);
 
+    public void bindBarrage(Barrage barrage);
+
 }

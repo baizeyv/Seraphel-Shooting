@@ -3,6 +3,7 @@ package com.seraphel.shooting.master.extend;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.seraphel.shooting.SeraphelGame;
 import com.seraphel.shooting.base.BaseScreen;
@@ -10,6 +11,8 @@ import com.seraphel.shooting.constant.Log;
 import com.seraphel.shooting.master.actor.TestBulletActor;
 import com.seraphel.shooting.master.builtin.*;
 import com.seraphel.shooting.master.builtin.data.PipeData;
+import com.seraphel.shooting.master.builtin.timeline.CaseCreaseTimeline;
+import com.seraphel.shooting.master.builtin.timeline.Timeline;
 import com.seraphel.shooting.master.extend.data.BulletData;
 import com.seraphel.shooting.master.extend.data.CaseData;
 import com.seraphel.shooting.master.extend.data.CaseGroupData;
@@ -34,6 +37,8 @@ public class Emitter implements Launcher {
     private PipeData pipeData;
 
     private NodeTree nodeTree;
+
+    private Barrage barrage;
 
     /**
      * 条件MAP
@@ -87,6 +92,11 @@ public class Emitter implements Launcher {
         this.nodeTree = nodeTree;
     }
 
+    @Override
+    public void bindBarrage(Barrage barrage) {
+        this.barrage = barrage;
+    }
+
     /**
      * 发射弹幕
      */
@@ -102,6 +112,7 @@ public class Emitter implements Launcher {
             // 只通过条数和范围来计算出的角度
             float noAngleDegree = worldRotation + offsetRotation;
 
+            // TODO:
             float baseX = node.getWorldX();
             float baseY = node.getWorldY();
             baseX += ref.radius * MathUtils.cosDeg(noAngleDegree + ref.radiusDegree);
@@ -127,11 +138,87 @@ public class Emitter implements Launcher {
      * 检测条件
      */
     public void detectCondition(Event event) {
+        Node node = nodeTree.findNode(pipeData.nodeData.name);
+        // 配置当前帧的条件MAP
+        conditionMap.put(PropertyType.CURRENT_FRAME, event.time);
+        // TODO:
+        float baseX = node.getWorldX();
+        float baseY = node.getWorldY();
+        conditionMap.put(PropertyType.X_AXIS_POSITION, baseX);
+        conditionMap.put(PropertyType.Y_AXIS_POSITION, baseY);
+        conditionMap.put(PropertyType.RADIUS, ref.radius);
+        conditionMap.put(PropertyType.RADIUS_DEGREE, ref.radiusDegree);
+        conditionMap.put(PropertyType.COUNT, (float) ref.count);
+        conditionMap.put(PropertyType.CYCLE, (float) ref.cycle);
+        conditionMap.put(PropertyType.ANGLE, ref.angle);
+        conditionMap.put(PropertyType.RANGE, ref.range);
+        conditionMap.put(PropertyType.BULLET_SCALE_X, ref.bulletData.scaleX);
+        conditionMap.put(PropertyType.BULLET_SCALE_Y, ref.bulletData.scaleY);
+        conditionMap.put(PropertyType.BULLET_COLOR_ALPHA, ref.bulletData.color.a);
+        conditionMap.put(PropertyType.BULLET_TOWARD, ref.bulletData.toward);
+
+        // 配置当前帧的结果MAP
+        resultMap.put(PropertyType.X_AXIS_POSITION, ref.shootX);
+        resultMap.put(PropertyType.Y_AXIS_POSITION, ref.shootY);
+        resultMap.put(PropertyType.RADIUS, ref.radius);
+        resultMap.put(PropertyType.RADIUS_DEGREE, ref.radiusDegree);
+        resultMap.put(PropertyType.COUNT, (float) ref.count);
+        resultMap.put(PropertyType.CYCLE, (float) ref.cycle);
+        resultMap.put(PropertyType.ANGLE, ref.angle);
+        resultMap.put(PropertyType.RANGE, ref.range);
+        resultMap.put(PropertyType.LAUNCHER_SPEED, ref.speed);
+        resultMap.put(PropertyType.LAUNCHER_SPEED_DIRECTION, ref.speedDirection);
+        resultMap.put(PropertyType.LAUNCHER_ACCELERATION, ref.acceleration);
+        resultMap.put(PropertyType.LAUNCHER_ACCELERATION_DIRECTION, ref.accelerationDirection);
+        resultMap.put(PropertyType.BULLET_LIFE, (float) ref.bulletData.life);
+        resultMap.put(PropertyType.BULLET_TYPE, (float) ref.bulletData.type);
+        resultMap.put(PropertyType.BULLET_SCALE_X, ref.bulletData.scaleX);
+        resultMap.put(PropertyType.BULLET_SCALE_Y, ref.bulletData.scaleY);
+        resultMap.put(PropertyType.BULLET_COLOR_R, ref.bulletData.color.r);
+        resultMap.put(PropertyType.BULLET_COLOR_G, ref.bulletData.color.g);
+        resultMap.put(PropertyType.BULLET_COLOR_B, ref.bulletData.color.b);
+        resultMap.put(PropertyType.BULLET_COLOR_ALPHA, ref.bulletData.color.a);
+        resultMap.put(PropertyType.BULLET_TOWARD, ref.bulletData.toward);
+        resultMap.put(PropertyType.BULLET_SPEED, ref.bulletData.speed);
+        resultMap.put(PropertyType.BULLET_SPEED_DIRECTION, ref.bulletData.speedDirection);
+        resultMap.put(PropertyType.BULLET_ACCELERATION, ref.bulletData.acceleration);
+        resultMap.put(PropertyType.BULLET_ACCELERATION_DIRECTION, ref.bulletData.accelerationDirection);
+        resultMap.put(PropertyType.HORIZONTAL_RATIO, ref.bulletData.horizontalRatio);
+        resultMap.put(PropertyType.VERTICAL_RATIO, ref.bulletData.verticalRatio);
+        resultMap.put(PropertyType.DISAPPEAR_EFFECT, 0f);
+        resultMap.put(PropertyType.DISAPPEAR_OUT_SCREEN, 0f);
+        resultMap.put(PropertyType.TAIL_EFFECT, 0f);
+
         for (CaseGroupData cgData : ref.caseGroups) {
             // TODO: 事件间隔及间隔增量的实现
             for (CaseData caseData : cgData.cases) {
-
+                if (caseData.detect(conditionMap, cgData, this)) {
+                    // 通过条件检验了
+                    // TODO:添加时间轴到优先级为MIDDLE的组中
+                    switch (caseData.changeType) {
+                        case INCREMENT: {
+                            Timeline timeline = new CaseCreaseTimeline(caseData, this, true);
+                            putCaseTimeline(timeline);
+                        }
+                        break;
+                        case DECREMENT: {
+                            Timeline timeline = new CaseCreaseTimeline(caseData, this, false);
+                            putCaseTimeline(timeline);
+                        }
+                        break;
+                    }
+                }
             }
+        }
+    }
+
+    private void putCaseTimeline(Timeline timeline) {
+        if (barrage.timelines.containsKey(TimelinePriority.MIDDLE)) {
+            barrage.timelines.get(TimelinePriority.MIDDLE).add(timeline);
+        } else {
+            Array<Timeline> arr = new Array<>();
+            arr.add(timeline);
+            barrage.timelines.put(TimelinePriority.MIDDLE, arr);
         }
     }
 
