@@ -11,7 +11,9 @@ import com.seraphel.shooting.constant.Log;
 import com.seraphel.shooting.master.actor.TestBulletActor;
 import com.seraphel.shooting.master.builtin.*;
 import com.seraphel.shooting.master.builtin.data.PipeData;
+import com.seraphel.shooting.master.builtin.timeline.CaseChangeToTimeline;
 import com.seraphel.shooting.master.builtin.timeline.CaseCreaseTimeline;
+import com.seraphel.shooting.master.builtin.timeline.CurveTimeline;
 import com.seraphel.shooting.master.builtin.timeline.Timeline;
 import com.seraphel.shooting.master.extend.data.BulletData;
 import com.seraphel.shooting.master.extend.data.CaseData;
@@ -194,16 +196,23 @@ public class Emitter implements Launcher {
             for (CaseData caseData : cgData.cases) {
                 if (caseData.detect(conditionMap, cgData, this)) {
                     // 通过条件检验了
-                    // TODO:添加时间轴到优先级为MIDDLE的组中
                     switch (caseData.changeType) {
                         case INCREMENT: {
-                            Timeline timeline = new CaseCreaseTimeline(caseData, this, true);
-                            putCaseTimeline(timeline);
+                            CurveTimeline timeline = new CaseCreaseTimeline(caseData, this, true);
+                            curveTimelineSetting(timeline, caseData);
+                            putMiddleTimeline(timeline);
                         }
                         break;
                         case DECREMENT: {
-                            Timeline timeline = new CaseCreaseTimeline(caseData, this, false);
-                            putCaseTimeline(timeline);
+                            CurveTimeline timeline = new CaseCreaseTimeline(caseData, this, false);
+                            curveTimelineSetting(timeline, caseData);
+                            putMiddleTimeline(timeline);
+                        }
+                        break;
+                        case CHANGE_TO: {
+                            CurveTimeline timeline = new CaseChangeToTimeline(caseData, this);
+                            curveTimelineSetting(timeline, caseData);
+                            putMiddleTimeline(timeline);
                         }
                         break;
                     }
@@ -212,7 +221,26 @@ public class Emitter implements Launcher {
         }
     }
 
-    private void putCaseTimeline(Timeline timeline) {
+    private void curveTimelineSetting(CurveTimeline timeline, CaseData caseData) {
+        // TODO: timeline set
+        switch (caseData.curve.type) {
+            case 0: // FIX
+                timeline.setFix(0);
+                break;
+            case 1: // PRO
+                timeline.setPro(0);
+                break;
+            case 2: // SIN
+                timeline.setSin(0);
+                break;
+            case 3: // basic curve
+                break;
+            case 4: // advance curve
+                break;
+        }
+    }
+
+    private void putMiddleTimeline(Timeline timeline) {
         if (barrage.timelines.containsKey(TimelinePriority.MIDDLE)) {
             barrage.timelines.get(TimelinePriority.MIDDLE).add(timeline);
         } else {

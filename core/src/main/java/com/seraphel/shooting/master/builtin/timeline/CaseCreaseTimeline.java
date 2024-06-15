@@ -31,6 +31,8 @@ public class CaseCreaseTimeline extends CurveTimeline {
         if (finished)
             return;
         super.call(lastTime, time);
+        if (caseData.curve == null)
+            return;
         float deltaTime = Gdx.graphics.getDeltaTime();
         timeCounter += deltaTime;
         if (timeCounter >= totalTime) {
@@ -39,6 +41,7 @@ public class CaseCreaseTimeline extends CurveTimeline {
         }
         float percent = MathUtils.clamp(deltaTime / totalTime, 0, 1);
         // TODO: get curve percent
+        percent = getCurvePercent(0, percent);
         float changeValue = Float.parseFloat(caseData.resultValue) * percent;
         switch (caseData.propertyResult) {
             case X_AXIS_POSITION: {

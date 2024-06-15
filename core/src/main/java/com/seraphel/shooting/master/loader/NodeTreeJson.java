@@ -310,7 +310,7 @@ public class NodeTreeJson {
 
             caseData.duration = caseDataMap.getInt("duration", 0);
 
-            caseData.curve = readCurve(caseDataMap.getChild("curve"));
+            caseData.curve = readCurve(caseDataMap.get("curve"));
 
             int ct = caseDataMap.getInt("changeType", -1);
             if (ct != -1)
@@ -326,22 +326,35 @@ public class NodeTreeJson {
     }
 
     private CurveData readCurve(JsonValue curveMap) {
-        CurveData data = new CurveData();
-
         if (curveMap == null) {
-            data.time = 0;
-            data.curveStartX = 0;
-            data.curveStartY = 0;
-            data.curveEndX = 1;
-            data.curveEndY = 1;
-            return data;
+            throw new SerializationException("Curve map is null");
         }
 
-        data.time = curveMap.getFloat("time", 0);
-        data.curveStartX = curveMap.getFloat("startX", 0);
-        data.curveStartY = curveMap.getFloat("startY", 0);
-        data.curveEndX = curveMap.getFloat("endX", 1);
-        data.curveEndY = curveMap.getFloat("endY", 1);
+        String type = curveMap.getString("type");
+        if (type == null)
+            return null;
+
+        // TODO: 5种类型
+        CurveData data = new CurveData();
+
+        switch (type) {
+            case "SIN": // 正弦
+                break;
+            case "PRO": // 正比
+                break;
+            case "FIX": // 固定
+                break;
+            case "BASIC_CURVE": // 基础曲线,类似SPINE
+                data.type = 3;
+                data.time = curveMap.getFloat("time", 0);
+                data.curveStartX = curveMap.getFloat("startX", 0);
+                data.curveStartY = curveMap.getFloat("startY", 0);
+                data.curveEndX = curveMap.getFloat("endX", 1);
+                data.curveEndY = curveMap.getFloat("endY", 1);
+                break;
+            case "ADVANCED_CURVE": // 高级曲线,类似UNITY
+                break;
+        }
 
         return data;
     }
