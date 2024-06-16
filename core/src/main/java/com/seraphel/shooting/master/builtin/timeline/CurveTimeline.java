@@ -80,7 +80,6 @@ public class CurveTimeline extends BaseTimeline {
         if (type == PRO) return percent;
         if (type == FIX) return 1;
         if (type == SIN) {
-            // TODO:
             return MathUtils.sin(MathUtils.PI * 2 * percent);
         }
         if (type == BASIC_BEZIER) {

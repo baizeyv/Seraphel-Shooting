@@ -2,7 +2,6 @@ package com.seraphel.shooting.master.builtin.timeline;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
-import com.seraphel.shooting.constant.Log;
 import com.seraphel.shooting.master.Constant;
 import com.seraphel.shooting.master.extend.Emitter;
 import com.seraphel.shooting.master.extend.data.CaseData;
@@ -76,13 +75,14 @@ public class CaseChangeToTimeline extends CurveTimeline {
                     }
                     float total = caseData.duration * Constant.STANDARD_FRAME_TIME;
                     float percent = MathUtils.clamp((total - remainingTime) / total, 0, 1);
-                    Log.error("" + percent);
                     percent = getCurvePercent(0, percent);
                     emitter.ref.angle = startData.angle + (Float.parseFloat(caseData.resultValue) - startData.angle) * percent;
                     remainingTime -= deltaTime;
                 } else if (caseData.curve.type == 0) { // FIX 固定变化
-                    emitter.ref.angle = Float.parseFloat(caseData.resultValue);
-                    finished = true;
+                    emitter.ref.angle = Float.parseFloat(caseData.resultValue) * getCurvePercent(0, 1);
+                    remainingTime -= deltaTime;
+                    if (remainingTime <= 0)
+                        finished = true;
                 } else { // PRO AND CURVE
                     // NOTE: ANGLE CHANGE_TO PRO 变化
                     float percent = MathUtils.clamp(deltaTime / remainingTime, 0, 1);
