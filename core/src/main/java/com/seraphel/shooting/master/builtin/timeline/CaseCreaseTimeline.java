@@ -34,15 +34,6 @@ public class CaseCreaseTimeline extends CurveTimeline {
         if (caseData.curve == null)
             return;
         float deltaTime = Gdx.graphics.getDeltaTime();
-        timeCounter += deltaTime;
-        if (timeCounter >= totalTime) {
-            deltaTime = timeCounter - totalTime;
-            finished = true;
-        }
-        float percent = MathUtils.clamp(deltaTime / totalTime, 0, 1);
-        // TODO: get curve percent
-        percent = getCurvePercent(0, percent);
-        float changeValue = Float.parseFloat(caseData.resultValue) * percent;
         switch (caseData.propertyResult) {
             case X_AXIS_POSITION: {
                 // TODO:
@@ -69,10 +60,25 @@ public class CaseCreaseTimeline extends CurveTimeline {
             }
             break;
             case ANGLE: {
-                if (positiveOrNegative)
-                    emitter.ref.angle += changeValue;
-                else
-                    emitter.ref.angle -= changeValue;
+                if (caseData.curve.type == 2) { // SIN 正弦变化
+
+                } else if (caseData.curve.type == 0) { // FIX 固定变化
+
+                } else { // PRO AND CURVE
+                    timeCounter += deltaTime;
+                    if (timeCounter >= totalTime) {
+                        deltaTime = timeCounter - totalTime;
+                        finished = true;
+                    }
+                    float percent = MathUtils.clamp(deltaTime / totalTime, 0, 1);
+                    // TODO: get curve percent
+                    percent = getCurvePercent(0, percent);
+                    float changeValue = Float.parseFloat(caseData.resultValue) * percent;
+                    if (positiveOrNegative)
+                        emitter.ref.angle += changeValue;
+                    else
+                        emitter.ref.angle -= changeValue;
+                }
             }
             break;
             case RANGE: {

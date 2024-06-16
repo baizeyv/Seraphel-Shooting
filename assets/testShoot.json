@@ -61,22 +61,10 @@
                                     "valueA": 1,
                                     "propertyResult": 7,
                                     "resultValue": 90,
-                                    "changeType": 0,
+                                    "changeType": 1,
                                     "duration": 50,
                                     "curve": {
                                         "type": "SIN"
-                                    }
-                                },
-                                {
-                                    "conditionA": 0,
-                                    "operatorA": 2,
-                                    "valueA": 2,
-                                    "propertyResult": 7,
-                                    "resultValue": 30,
-                                    "changeType": 0,
-                                    "duration": 25,
-                                    "curve": {
-                                        "type": "FIX"
                                     }
                                 }
                             ]
