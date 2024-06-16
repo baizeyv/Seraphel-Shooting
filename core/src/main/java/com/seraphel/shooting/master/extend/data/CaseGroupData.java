@@ -18,7 +18,8 @@ public class CaseGroupData implements Cloneable {
     public Object cloneX() throws CloneNotSupportedException {
         CaseGroupData res = (CaseGroupData) super.clone();
         res.cases = new Array<CaseData>();
-        for (CaseData caseData : this.cases) {
+        for (int i = 0; i < cases.size; i++) {
+            CaseData caseData = cases.get(i);
             res.cases.add((CaseData) caseData.cloneX());
         }
         return res;

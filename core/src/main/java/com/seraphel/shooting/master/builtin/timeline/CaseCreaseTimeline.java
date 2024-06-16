@@ -17,7 +17,7 @@ public class CaseCreaseTimeline extends CurveTimeline {
     private boolean finished;
 
     public CaseCreaseTimeline(CaseData caseData, Emitter emitter, boolean positiveOrNegative) {
-        super(1);
+        super(2);
         this.caseData = caseData;
         this.emitter = emitter;
         this.positiveOrNegative = positiveOrNegative;

@@ -133,7 +133,8 @@ public class EmitterData implements Cloneable {
         EmitterData res = (EmitterData) super.clone();
         res.bulletData = (BulletData) bulletData.cloneX();
         res.caseGroups = new Array<CaseGroupData>();
-        for (CaseGroupData caseGroupData : this.caseGroups) {
+        for (int i = 0; i < this.caseGroups.size; i++) {
+            CaseGroupData caseGroupData = this.caseGroups.get(i);
             res.caseGroups.add((CaseGroupData) caseGroupData.cloneX());
         }
         return res;

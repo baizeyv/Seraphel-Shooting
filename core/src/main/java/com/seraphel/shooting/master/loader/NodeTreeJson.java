@@ -339,10 +339,13 @@ public class NodeTreeJson {
 
         switch (type) {
             case "SIN": // 正弦
+                data.type = 2;
                 break;
             case "PRO": // 正比
+                data.type = 1;
                 break;
             case "FIX": // 固定
+                data.type = 0;
                 break;
             case "BASIC_CURVE": // 基础曲线,类似SPINE
                 data.type = 3;
@@ -353,6 +356,7 @@ public class NodeTreeJson {
                 data.curveEndY = curveMap.getFloat("endY", 1);
                 break;
             case "ADVANCED_CURVE": // 高级曲线,类似UNITY
+                data.type = 4;
                 break;
         }
 

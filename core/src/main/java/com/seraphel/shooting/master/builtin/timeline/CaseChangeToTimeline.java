@@ -1,8 +1,12 @@
 package com.seraphel.shooting.master.builtin.timeline;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
+import com.seraphel.shooting.constant.Log;
+import com.seraphel.shooting.master.Constant;
 import com.seraphel.shooting.master.extend.Emitter;
 import com.seraphel.shooting.master.extend.data.CaseData;
+import com.seraphel.shooting.master.extend.data.EmitterData;
 
 public class CaseChangeToTimeline extends CurveTimeline {
 
@@ -12,27 +16,33 @@ public class CaseChangeToTimeline extends CurveTimeline {
 
     private boolean finished;
 
+    // 激活时的数据
+    private final EmitterData startData;
+
+    // 剩余时间
+    private float remainingTime;
+
     public CaseChangeToTimeline(CaseData caseData, Emitter emitter) {
-        super(1);
+        super(2);
         this.caseData = caseData;
         this.emitter = emitter;
+        try {
+            this.startData = (EmitterData) emitter.ref.cloneX();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
         finished = false;
+        remainingTime = caseData.duration * Constant.STANDARD_FRAME_TIME;
     }
 
     @Override
     public void call(float lastTime, float time) {
+        if (finished)
+            return;
         super.call(lastTime, time);
         float deltaTime = Gdx.graphics.getDeltaTime();
         if (caseData.curve == null)
             return;
-        if (caseData.curve.type == 2) { // SIN 正弦变化
-            // TODO:
-        } else if (caseData.curve.type == 0) { // FIX 固定变化
-            finished = true;
-            // TODO:
-        } else {
-            // TODO:
-        }
         // TODO:
         switch (caseData.propertyResult) {
             case X_AXIS_POSITION: {
@@ -60,7 +70,29 @@ public class CaseChangeToTimeline extends CurveTimeline {
             }
             break;
             case ANGLE: {
-                // TODO:
+                if (caseData.curve.type == 2) { // SIN 正弦变化
+                    if (remainingTime <= 0) {
+                        finished = true;
+                    }
+                    float total = caseData.duration * Constant.STANDARD_FRAME_TIME;
+                    float percent = MathUtils.clamp((total - remainingTime) / total, 0, 1);
+                    Log.error("" + percent);
+                    percent = getCurvePercent(0, percent);
+                    emitter.ref.angle = startData.angle + (Float.parseFloat(caseData.resultValue) - startData.angle) * percent;
+                    remainingTime -= deltaTime;
+                } else if (caseData.curve.type == 0) { // FIX 固定变化
+                    emitter.ref.angle = Float.parseFloat(caseData.resultValue);
+                    finished = true;
+                } else { // PRO AND CURVE
+                    // NOTE: ANGLE CHANGE_TO PRO 变化
+                    float percent = MathUtils.clamp(deltaTime / remainingTime, 0, 1);
+                    percent = getCurvePercent(0, percent);
+                    emitter.ref.angle = (Float.parseFloat(caseData.resultValue) - emitter.ref.angle) * percent + emitter.ref.angle;
+                    remainingTime -= deltaTime;
+                    if (remainingTime <= 0) {
+                        finished = true;
+                    }
+                }
             }
             break;
             case RANGE: {
