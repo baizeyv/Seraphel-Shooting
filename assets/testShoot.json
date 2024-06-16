@@ -74,7 +74,7 @@
                                     "propertyResult": 7,
                                     "resultValue": 30,
                                     "changeType": 0,
-                                    "duration": 50,
+                                    "duration": 25,
                                     "curve": {
                                         "type": "FIX"
                                     }

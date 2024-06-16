@@ -25,7 +25,7 @@ public class BaseTimeline implements Timeline {
     }
 
     @Override
-    public void restore() {
+    public void reset() {
         System.arraycopy(originFrames, 0, frames, 0, frames.length);
     }
 

@@ -2,6 +2,7 @@ package com.seraphel.shooting.master.builtin;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.seraphel.shooting.master.builtin.data.BarrageStateData;
 import com.seraphel.shooting.master.builtin.timeline.EventTimeline;
 import com.seraphel.shooting.master.builtin.timeline.Timeline;
@@ -141,6 +142,18 @@ public class BarrageState {
             complete = barrageTime >= barrageEnd && entry.barrageLast < barrageEnd;
         if (complete) {
             queue.complete(entry);
+            // 清除由Case创造出的时间轴
+            if (track.barrage.timelines.containsKey(TimelinePriority.MIDDLE)) {
+                track.barrage.timelines.get(TimelinePriority.MIDDLE).clear();
+            }
+            // 恢复所有时间轴的初始状态
+            for (ObjectMap.Entry<TimelinePriority, Array<Timeline>> timelineEntry : track.barrage.timelines) {
+                if (timelineEntry.value == null)
+                    continue;
+                for (Timeline timeline : timelineEntry.value) {
+                    timeline.reset();
+                }
+            }
         }
 
         // Queue events after complete.

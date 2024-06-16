@@ -6,7 +6,7 @@ public interface Timeline {
 
     public int getPropertyId();
 
-    public void restore();
+    public void reset();
 
     public int getFrameCount();
 
