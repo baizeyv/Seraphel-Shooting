@@ -63,7 +63,7 @@ public class CaseCreaseTimeline extends CurveTimeline {
                 if (caseData.curve.type == 2) { // SIN 正弦变化
 
                 } else if (caseData.curve.type == 0) { // FIX 固定变化
-
+                    // TODO: 固定增加、减少变化需要是每0.016665f秒进行一次添加, 这个时间需要根据弹幕的事件检测时长来获取
                 } else { // PRO AND CURVE
                     timeCounter += deltaTime;
                     if (timeCounter >= totalTime) {
@@ -71,7 +71,6 @@ public class CaseCreaseTimeline extends CurveTimeline {
                         finished = true;
                     }
                     float percent = MathUtils.clamp(deltaTime / totalTime, 0, 1);
-                    // TODO: get curve percent
                     percent = getCurvePercent(0, percent);
                     float changeValue = Float.parseFloat(caseData.resultValue) * percent;
                     if (positiveOrNegative)
