@@ -61,10 +61,10 @@
                                     "valueA": 1,
                                     "propertyResult": 7,
                                     "resultValue": 90,
-                                    "changeType": 0,
+                                    "changeType": 1,
                                     "duration": 50,
                                     "curve": {
-                                        "type": "SIN"
+                                        "type": "PRO"
                                     }
                                 }
                             ]

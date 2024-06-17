@@ -117,12 +117,7 @@ public class CaseData implements Cloneable {
      */
     private float gainDetectionGap(Emitter emitter) {
         int detectionUnit = emitter.ref.detectionUnit;
-        switch (detectionUnit) {
-            case 60:
-                return Constant.STANDARD_FRAME_TIME_60;
-            default:
-                return Constant.STANDARD_FRAME_TIME;
-        }
+        return Constant.getStandardFrameTime(detectionUnit);
     }
 
     public Object cloneX() throws CloneNotSupportedException {

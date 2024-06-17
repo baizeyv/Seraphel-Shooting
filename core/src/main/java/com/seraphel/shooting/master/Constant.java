@@ -16,4 +16,13 @@ public class Constant {
 
     public static float STANDARD_FRAME_TIME_60 = 0.016665f;
 
+    public static float getStandardFrameTime(int unit) {
+        switch (unit) {
+            case 60:
+                return STANDARD_FRAME_TIME_60;
+            default:
+                return STANDARD_FRAME_TIME;
+        }
+    }
+
 }

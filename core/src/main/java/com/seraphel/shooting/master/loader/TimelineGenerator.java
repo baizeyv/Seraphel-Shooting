@@ -34,12 +34,7 @@ public class TimelineGenerator {
     public static Timeline emitterConditionDetection(Emitter emitter, float duration) {
         // 条件检测时间轴 [Condition Timeline] 应当放在最开始
         int unit = emitter.ref.detectionUnit;
-        float gapTime = Constant.STANDARD_FRAME_TIME;
-        switch (unit) {
-            case 60:
-                gapTime = Constant.STANDARD_FRAME_TIME_60;
-                break;
-        }
+        float gapTime = Constant.getStandardFrameTime(unit);
         int detectCount = (int) (duration / gapTime);
 
         EventTimeline conditionTimeline = new EventTimeline(detectCount);
@@ -49,7 +44,8 @@ public class TimelineGenerator {
         return conditionTimeline;
     }
 
-    public static Timeline emitterCase(CaseData caseData, Emitter emitter) {
+    public static Timeline emitterCase(Emitter emitter) {
+        // 事件执行时间轴 [Case Timeline] 应当放在 条件检测之后以及发射之前
         // TODO:
         return null;
     }

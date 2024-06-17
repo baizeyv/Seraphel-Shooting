@@ -14,6 +14,7 @@ public class CaseCreaseTimeline extends CurveTimeline {
     private final float totalTime;
     private final boolean positiveOrNegative;
     private float timeCounter;
+    private float fixCounter;
     private boolean finished;
 
     public CaseCreaseTimeline(CaseData caseData, Emitter emitter, boolean positiveOrNegative) {
@@ -24,6 +25,7 @@ public class CaseCreaseTimeline extends CurveTimeline {
         timeCounter = 0;
         totalTime = caseData.duration * Constant.STANDARD_FRAME_TIME;
         finished = false;
+        fixCounter = 0;
     }
 
     @Override
@@ -64,6 +66,21 @@ public class CaseCreaseTimeline extends CurveTimeline {
 
                 } else if (caseData.curve.type == 0) { // FIX 固定变化
                     // TODO: 固定增加、减少变化需要是每0.016665f秒进行一次添加, 这个时间需要根据弹幕的事件检测时长来获取
+                    // TODO: 我觉得固定变化的增加减少用 EventTimeline 来实现更方便且更准确一些
+                    timeCounter += deltaTime;
+                    fixCounter += deltaTime;
+                    if (timeCounter >= totalTime) {
+                        finished = true;
+                    }
+                    float standard = Constant.getStandardFrameTime(emitter.ref.detectionUnit);
+                    if (fixCounter >= standard) {
+                        fixCounter -= standard;
+                        if (positiveOrNegative) {
+                            emitter.ref.angle += Float.parseFloat(caseData.resultValue);
+                        } else {
+                            emitter.ref.angle -= Float.parseFloat(caseData.resultValue);
+                        }
+                    }
                 } else { // PRO AND CURVE
                     timeCounter += deltaTime;
                     if (timeCounter >= totalTime) {
