@@ -46,7 +46,7 @@ public class CaseData implements Cloneable {
      * @return boolean
      */
     public boolean detect(ArrayMap<PropertyType, Float> conditionMap, CaseGroupData caseGroup, Emitter emitter) {
-        // TODO: args
+        // TODO: args 以及事件间隔的实现
         int aFlag = detectCondition(conditionMap, caseGroup, emitter, conditionA, operatorA, valueA);
         int bFlag = detectCondition(conditionMap, caseGroup, emitter, conditionB, operatorB, valueB);
 

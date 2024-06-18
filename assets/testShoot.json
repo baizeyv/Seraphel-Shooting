@@ -50,25 +50,27 @@
                         "radiusDegree": 0,
                         "range": 360,
                         "count": 1,
-                        "emitterCaseGroups": {
-                            "desc": "no desc",
-                            "interval": 1,
-                            "incrementValue": 0,
-                            "cases": [
-                                {
-                                    "conditionA": 0,
-                                    "operatorA": 2,
-                                    "valueA": 1,
-                                    "propertyResult": 7,
-                                    "resultValue": 90,
-                                    "changeType": 1,
-                                    "duration": 100,
-                                    "curve": {
-                                        "type": "SIN"
+                        "emitterCaseGroups": [
+                            {
+                                "desc": "no desc",
+                                "interval": 1,
+                                "incrementValue": 0,
+                                "cases": [
+                                    {
+                                        "conditionA": 0,
+                                        "operatorA": 2,
+                                        "valueA": 1,
+                                        "propertyResult": 7,
+                                        "resultValue": 90,
+                                        "changeType": 1,
+                                        "duration": 100,
+                                        "curve": {
+                                            "type": "SIN"
+                                        }
                                     }
-                                }
-                            ]
-                        },
+                                ]
+                            }
+                        ],
                         "bullet": {
                             "speed": 300,
                             "scaleX": 1,

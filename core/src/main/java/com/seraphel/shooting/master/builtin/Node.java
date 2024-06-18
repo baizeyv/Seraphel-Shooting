@@ -1,5 +1,6 @@
 package com.seraphel.shooting.master.builtin;
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -139,5 +140,9 @@ public class Node {
         localRotation -= rotation - shearX;
         float sin = MathUtils.sinDeg(localRotation), cos = MathUtils.cosDeg(localRotation);
         return MathUtils.atan2(cos * c + sin * d, cos * a + sin * b) * MathUtils.radiansToDegrees;
+    }
+
+    public void drawDebug(ShapeRenderer shapes) {
+
     }
 }

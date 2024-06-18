@@ -13,6 +13,9 @@ public class CaseGroupData implements Cloneable {
     /* 间隔增量 */
     public float incrementValue;
 
+    /* 循环次数 */
+    public int loopTimes;
+
     public Array<CaseData> cases = new Array<CaseData>();
 
     public Object cloneX() throws CloneNotSupportedException {

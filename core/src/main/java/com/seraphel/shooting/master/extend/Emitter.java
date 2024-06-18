@@ -1,11 +1,13 @@
 package com.seraphel.shooting.master.extend;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.*;
 import com.seraphel.shooting.SeraphelGame;
 import com.seraphel.shooting.base.BaseScreen;
 import com.seraphel.shooting.constant.Log;
+import com.seraphel.shooting.master.Constant;
 import com.seraphel.shooting.master.actor.TestBulletActor;
 import com.seraphel.shooting.master.builtin.*;
 import com.seraphel.shooting.master.builtin.data.ExecutionData;
@@ -210,7 +212,12 @@ public class Emitter implements Launcher {
         resultMap.put(PropertyType.TAIL_EFFECT, 0f);
 
         for (CaseGroupData cgData : ref.caseGroups) {
-            // TODO: 事件间隔及间隔增量的实现
+            // TODO: 事件间隔及间隔增量的实现 (需要在CaseData 的 Detect 方法中有部分操作)
+            if (cgData.interval <= 0)
+                cgData.interval = 1;
+            if ((event.time / Constant.getStandardFrameTime(ref.detectionUnit)) % cgData.interval == 0) {
+                cgData.loopTimes ++;
+            }
             for (CaseData caseData : cgData.cases) {
                 if (caseData.detect(conditionMap, cgData, this)) {
                     // 通过条件检验了
@@ -2678,6 +2685,7 @@ public class Emitter implements Launcher {
         Node node = getNode();
         float xx = node.getWorldX();
         float yy = node.getWorldY();
-        shapes.circle(xx, yy, 20);
+        shapes.setColor(Color.CYAN);
+        shapes.circle(xx, yy, 10);
     }
 }

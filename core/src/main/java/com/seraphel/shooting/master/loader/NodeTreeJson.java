@@ -218,7 +218,7 @@ public class NodeTreeJson {
                 data.disappearEffect = map.getBoolean("disappearEffect", false);
                 data.tailEffect = map.getBoolean("tailEffect", false);
 
-                for (JsonValue caseGroupMap = map.get("emitterCaseGroups"); caseGroupMap != null; caseGroupMap = caseGroupMap.next) {
+                for (JsonValue caseGroupMap = map.getChild("emitterCaseGroups"); caseGroupMap != null; caseGroupMap = caseGroupMap.next) {
                     CaseGroupData caseGroupData = readCaseGroup(caseGroupMap);
                     data.caseGroups.add(caseGroupData);
                 }
