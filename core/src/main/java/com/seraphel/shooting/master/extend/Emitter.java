@@ -2,15 +2,13 @@ package com.seraphel.shooting.master.extend;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ArrayMap;
+import com.badlogic.gdx.utils.*;
 import com.seraphel.shooting.SeraphelGame;
 import com.seraphel.shooting.base.BaseScreen;
 import com.seraphel.shooting.constant.Log;
 import com.seraphel.shooting.master.actor.TestBulletActor;
 import com.seraphel.shooting.master.builtin.*;
-import com.seraphel.shooting.master.builtin.data.EventData;
+import com.seraphel.shooting.master.builtin.data.ExecutionData;
 import com.seraphel.shooting.master.builtin.data.PipeData;
 import com.seraphel.shooting.master.builtin.timeline.*;
 import com.seraphel.shooting.master.extend.data.BulletData;
@@ -33,6 +31,10 @@ public class Emitter implements Launcher {
     public final Executable shootActuator;
 
     public final Executable conditionActuator;
+
+    public final Executable resultActuator;
+
+    private final ArrayMap<ExecutionData, CaseData> executionMap = new ArrayMap<>();
 
     private PipeData pipeData;
 
@@ -74,6 +76,17 @@ public class Emitter implements Launcher {
                     detectCondition(event);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
+                }
+            }
+        };
+        /* ---------------------------------------------- */
+        resultActuator = new Executable() {
+            @Override
+            public void execute(Event event) {
+                try {
+                    executionResult(event);
+                } catch (Exception e) {
+                    throw new GdxRuntimeException(e);
                 }
             }
         };
@@ -132,6 +145,13 @@ public class Emitter implements Launcher {
             BaseScreen bs = (BaseScreen) SeraphelGame.ins.getScreen();
             bs.addActor(testBulletActor);
         }
+    }
+
+    /**
+     * 恢复发射弹幕
+     */
+    public void recover() {
+        // TODO:
     }
 
     /**
@@ -194,47 +214,2445 @@ public class Emitter implements Launcher {
             for (CaseData caseData : cgData.cases) {
                 if (caseData.detect(conditionMap, cgData, this)) {
                     // 通过条件检验了
-                    switch (caseData.changeType) {
-                        case INCREMENT: {
-                            CurveTimeline timeline = new CaseCreaseTimeline(caseData, this, true);
-                            curveTimelineSetting(timeline, caseData);
-                            putMiddleTimeline(timeline);
-                        }
-                        break;
-                        case DECREMENT: {
-                            CurveTimeline timeline = new CaseCreaseTimeline(caseData, this, false);
-                            curveTimelineSetting(timeline, caseData);
-                            putMiddleTimeline(timeline);
-                        }
-                        break;
-                        case CHANGE_TO: {
-                            CurveTimeline timeline = new CaseChangeToTimeline(caseData, this);
-                            curveTimelineSetting(timeline, caseData);
-                            putMiddleTimeline(timeline);
-                        }
-                        break;
-                    }
+                    ExecutionData eData = new ExecutionData();
+                    eData.elapsedFrame = 0;
+                    eData.targetValue = Float.parseFloat(caseData.resultValue);
+                    eData.startValue = resultMap.get(caseData.propertyResult);
+                    eData.finished = false;
+                    executionMap.put(eData, caseData);
                 }
             }
         }
     }
 
-    private void curveTimelineSetting(CurveTimeline timeline, CaseData caseData) {
-        // TODO: timeline set
-        switch (caseData.curve.type) {
-            case 0: // FIX
-                timeline.setFix(0);
+    public void executionResult(Event event) {
+        for (ObjectMap.Entry<ExecutionData, CaseData> entry : executionMap) {
+            ExecutionData item = entry.key;
+            CaseData val = entry.value;
+            if (item == null || item.finished || val == null)
+                continue;
+            // 特殊的效果部分
+            if (val.propertyResult == PropertyType.TAIL_EFFECT) {
+                ref.tailEffect = item.targetValue > 0;
+                return;
+            } else if (val.propertyResult == PropertyType.DISAPPEAR_EFFECT) {
+                ref.disappearEffect = item.targetValue > 0;
+                return;
+            } else if (val.propertyResult == PropertyType.DISAPPEAR_OUT_SCREEN) {
+                ref.removeOutOfScreen = item.targetValue > 0;
+                return;
+            }
+
+            switch (val.curve.type) {
+                case 0: { // 固定变化
+                    switch (val.propertyResult) {
+                        case X_AXIS_POSITION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case Y_AXIS_POSITION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case RADIUS: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.radius = item.targetValue;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.radius += item.targetValue;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.radius -= item.targetValue;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case RADIUS_DEGREE: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.radiusDegree = item.targetValue;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.radiusDegree += item.targetValue;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.radiusDegree -= item.targetValue;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case COUNT: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.count = (int) item.targetValue;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.count += (int) item.targetValue;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.count -= (int) item.targetValue;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case CYCLE: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case ANGLE: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.angle = item.targetValue;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.angle += item.targetValue;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.angle -= item.targetValue;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case RANGE: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.range = item.targetValue;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.range += item.targetValue;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.range -= item.targetValue;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case LAUNCHER_SPEED: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case LAUNCHER_SPEED_DIRECTION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case LAUNCHER_ACCELERATION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case LAUNCHER_ACCELERATION_DIRECTION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_LIFE: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.life = (int) item.targetValue;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.life += (int) item.targetValue;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.life -= (int) item.targetValue;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_TYPE: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.type = (int) item.targetValue;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.type += (int) item.targetValue;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.type -= (int) item.targetValue;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_SCALE_X: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.scaleX = (int) item.targetValue;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.scaleX += (int) item.targetValue;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.scaleX -= (int) item.targetValue;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_SCALE_Y: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.scaleY = (int) item.targetValue;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.scaleY += (int) item.targetValue;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.scaleY -= (int) item.targetValue;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_COLOR_R: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.color.r = item.targetValue / 255f;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.color.r = MathUtils.clamp(ref.bulletData.color.r + item.targetValue / 255f, 0f, 1f);
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.color.r = MathUtils.clamp(ref.bulletData.color.r - item.targetValue / 255f, 0f, 1f);
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_COLOR_G: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.color.g = item.targetValue / 255f;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.color.g = MathUtils.clamp(ref.bulletData.color.g + item.targetValue / 255f, 0f, 1f);
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.color.g = MathUtils.clamp(ref.bulletData.color.g - item.targetValue / 255f, 0f, 1f);
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_COLOR_B: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.color.b = item.targetValue / 255f;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.color.b = MathUtils.clamp(ref.bulletData.color.b + item.targetValue / 255f, 0f, 1f);
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.color.b = MathUtils.clamp(ref.bulletData.color.b - item.targetValue / 255f, 0f, 1f);
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_COLOR_ALPHA: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.color.a = item.targetValue / 255f;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.color.a = MathUtils.clamp(ref.bulletData.color.a + item.targetValue / 255f, 0f, 1f);
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.color.a = MathUtils.clamp(ref.bulletData.color.a - item.targetValue / 255f, 0f, 1f);
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_TOWARD: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.toward = item.targetValue;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.toward += item.targetValue;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.toward -= item.targetValue;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_SPEED: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.speed = item.targetValue;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.speed += item.targetValue;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.speed -= item.targetValue;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_SPEED_DIRECTION: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.speedDirection = item.targetValue;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.speedDirection += item.targetValue;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.speedDirection -= item.targetValue;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_ACCELERATION: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.acceleration = item.targetValue;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.acceleration += item.targetValue;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.acceleration -= item.targetValue;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_ACCELERATION_DIRECTION: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.accelerationDirection = item.targetValue;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.accelerationDirection += item.targetValue;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.accelerationDirection -= item.targetValue;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case HORIZONTAL_RATIO: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.horizontalRatio = item.targetValue;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.horizontalRatio += item.targetValue;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.horizontalRatio -= item.targetValue;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case VERTICAL_RATIO: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.verticalRatio = item.targetValue;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.verticalRatio += item.targetValue;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.verticalRatio -= item.targetValue;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
                 break;
-            case 1: // PRO
-                timeline.setPro(0);
+                case 1: { // 正比变化
+                    // TODO;
+                    switch (val.propertyResult) {
+                        case X_AXIS_POSITION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case Y_AXIS_POSITION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case RADIUS: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.radius += 1f / (val.duration - item.elapsedFrame) * (item.targetValue - ref.radius);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.radius += item.targetValue / val.duration;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.radius -= item.targetValue / val.duration;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case RADIUS_DEGREE: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.radiusDegree += 1f / (val.duration - item.elapsedFrame) * (item.targetValue - ref.radiusDegree);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.radiusDegree += item.targetValue / val.duration;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.radiusDegree -= item.targetValue / val.duration;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case COUNT: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.count += (int) (1f / (val.duration - item.elapsedFrame) * (item.targetValue - ref.count));
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.count += (int) (item.targetValue / val.duration);
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.count -= (int) (item.targetValue / val.duration);
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case CYCLE: {
+                            // TODO: change timeline
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.cycle += (int) (1f / (val.duration - item.elapsedFrame) * (item.targetValue - ref.cycle));
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.cycle += (int) (item.targetValue / val.duration);
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.cycle -= (int) (item.targetValue / val.duration);
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case ANGLE: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.angle += 1f / (val.duration - item.elapsedFrame) * (item.targetValue - ref.angle);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.angle += item.targetValue / val.duration;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.angle -= item.targetValue / val.duration;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case RANGE: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.range += 1f / (val.duration - item.elapsedFrame) * (item.targetValue - ref.range);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.range += item.targetValue / val.duration;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.range -= item.targetValue / val.duration;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case LAUNCHER_SPEED: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case LAUNCHER_SPEED_DIRECTION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case LAUNCHER_ACCELERATION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case LAUNCHER_ACCELERATION_DIRECTION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_LIFE: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.life += (int) (1f / (val.duration - item.elapsedFrame) * (item.targetValue - ref.bulletData.life));
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.life += (int) (item.targetValue / val.duration);
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.life -= (int) (item.targetValue / val.duration);
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_TYPE: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.type += (int) (1f / (val.duration - item.elapsedFrame) * (item.targetValue - ref.bulletData.type));
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.type += (int) (item.targetValue / val.duration);
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.type -= (int) (item.targetValue / val.duration);
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_SCALE_X: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.scaleX += 1f / (val.duration - item.elapsedFrame) * (item.targetValue - ref.bulletData.scaleX);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.scaleX += item.targetValue / val.duration;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.scaleX -= item.targetValue / val.duration;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_SCALE_Y: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.scaleY += 1f / (val.duration - item.elapsedFrame) * (item.targetValue - ref.bulletData.scaleY);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.scaleY += item.targetValue / val.duration;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.scaleY -= item.targetValue / val.duration;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_COLOR_R: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.color.r = MathUtils.clamp(ref.bulletData.color.r + 1f / (val.duration - item.elapsedFrame) * (item.targetValue / 255f - ref.bulletData.color.r), 0, 1);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.color.r = MathUtils.clamp(ref.bulletData.color.r + (item.targetValue / 255f) / val.duration, 0, 1);
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.color.r = MathUtils.clamp(ref.bulletData.color.r - (item.targetValue / 255f) / val.duration, 0, 1);
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_COLOR_G: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.color.g = MathUtils.clamp(ref.bulletData.color.g + 1f / (val.duration - item.elapsedFrame) * (item.targetValue / 255f - ref.bulletData.color.g), 0, 1);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.color.g = MathUtils.clamp(ref.bulletData.color.g + (item.targetValue / 255f) / val.duration, 0, 1);
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.color.g = MathUtils.clamp(ref.bulletData.color.g - (item.targetValue / 255f) / val.duration, 0, 1);
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_COLOR_B: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.color.b = MathUtils.clamp(ref.bulletData.color.b + 1f / (val.duration - item.elapsedFrame) * (item.targetValue / 255f - ref.bulletData.color.b), 0, 1);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.color.b = MathUtils.clamp(ref.bulletData.color.b + (item.targetValue / 255f) / val.duration, 0, 1);
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.color.b = MathUtils.clamp(ref.bulletData.color.b - (item.targetValue / 255f) / val.duration, 0, 1);
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_COLOR_ALPHA: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.color.a = MathUtils.clamp(ref.bulletData.color.a + 1f / (val.duration - item.elapsedFrame) * (item.targetValue / 255f - ref.bulletData.color.a), 0, 1);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.color.a = MathUtils.clamp(ref.bulletData.color.a + (item.targetValue / 255f) / val.duration, 0, 1);
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.color.a = MathUtils.clamp(ref.bulletData.color.a - (item.targetValue / 255f) / val.duration, 0, 1);
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_TOWARD: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.toward += 1f / (val.duration - item.elapsedFrame) * (item.targetValue - ref.bulletData.toward);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.toward += item.targetValue / val.duration;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.toward -= item.targetValue / val.duration;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_SPEED: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.speed += 1f / (val.duration - item.elapsedFrame) * (item.targetValue - ref.bulletData.speed);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.speed += item.targetValue / val.duration;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.speed -= item.targetValue / val.duration;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_SPEED_DIRECTION: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.speedDirection += 1f / (val.duration - item.elapsedFrame) * (item.targetValue - ref.bulletData.speedDirection);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.speedDirection += item.targetValue / val.duration;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.speedDirection -= item.targetValue / val.duration;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_ACCELERATION: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.acceleration += 1f / (val.duration - item.elapsedFrame) * (item.targetValue - ref.bulletData.acceleration);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.acceleration += item.targetValue / val.duration;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.acceleration -= item.targetValue / val.duration;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_ACCELERATION_DIRECTION: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.accelerationDirection += 1f / (val.duration - item.elapsedFrame) * (item.targetValue - ref.bulletData.accelerationDirection);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.accelerationDirection += item.targetValue / val.duration;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.accelerationDirection -= item.targetValue / val.duration;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case HORIZONTAL_RATIO: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.horizontalRatio += 1f / (val.duration - item.elapsedFrame) * (item.targetValue - ref.bulletData.horizontalRatio);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.horizontalRatio += item.targetValue / val.duration;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.horizontalRatio -= item.targetValue / val.duration;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case VERTICAL_RATIO: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.verticalRatio += 1f / (val.duration - item.elapsedFrame) * (item.targetValue - ref.bulletData.verticalRatio);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.verticalRatio += item.targetValue / val.duration;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.verticalRatio -= item.targetValue / val.duration;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
                 break;
-            case 2: // SIN
-                timeline.setSin(0);
+                case 2: { // 正弦变化
+                    float percent = MathUtils.sin(MathUtils.PI * 2 * MathUtils.clamp((float) item.elapsedFrame / val.duration, 0, 1));
+                    // TODO:
+                    switch (val.propertyResult) {
+                        case X_AXIS_POSITION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case Y_AXIS_POSITION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case RADIUS: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.radius = item.startValue + (item.targetValue - item.startValue) * percent;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.radius = item.startValue + item.targetValue * percent;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.radius = item.startValue - item.targetValue * percent;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case RADIUS_DEGREE: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.radiusDegree = item.startValue + (item.targetValue - item.startValue) * percent;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.radiusDegree = item.startValue + item.targetValue * percent;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.radiusDegree = item.startValue - item.targetValue * percent;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case COUNT: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.count = (int) (item.startValue + (item.targetValue - item.startValue) * percent);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.count = (int) (item.startValue + item.targetValue * percent);
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.count = (int) (item.startValue - item.targetValue * percent);
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case CYCLE: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case ANGLE: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.angle = item.startValue + (item.targetValue - item.startValue) * percent;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.angle = item.startValue + item.targetValue * percent;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.angle = item.startValue - item.targetValue * percent;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case RANGE: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.range = item.startValue + (item.targetValue - item.startValue) * percent;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.range = item.startValue + item.targetValue * percent;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.range = item.startValue - item.targetValue * percent;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case LAUNCHER_SPEED: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.speed = item.startValue + (item.targetValue - item.startValue) * percent;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.speed = item.startValue + item.targetValue * percent;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.speed = item.startValue - item.targetValue * percent;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case LAUNCHER_SPEED_DIRECTION: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.speedDirection = item.startValue + (item.targetValue - item.startValue) * percent;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.speedDirection = item.startValue + item.targetValue * percent;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.speedDirection = item.startValue - item.targetValue * percent;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case LAUNCHER_ACCELERATION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.acceleration = item.startValue + (item.targetValue - item.startValue) * percent;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.acceleration = item.startValue + item.targetValue * percent;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.acceleration = item.startValue - item.targetValue * percent;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case LAUNCHER_ACCELERATION_DIRECTION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.accelerationDirection = item.startValue + (item.targetValue - item.startValue) * percent;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.accelerationDirection = item.startValue + item.targetValue * percent;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.accelerationDirection = item.startValue - item.targetValue * percent;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_LIFE: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.life = (int) (item.startValue + (item.targetValue - item.startValue) * percent);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.life = (int) (item.startValue + item.targetValue * percent);
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.life = (int) (item.startValue - item.targetValue * percent);
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_TYPE: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.type = (int) (item.startValue + (item.targetValue - item.startValue) * percent);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.type = (int) (item.startValue + item.targetValue * percent);
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.type = (int) (item.startValue - item.targetValue * percent);
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_SCALE_X: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.scaleX = item.startValue + (item.targetValue - item.startValue) * percent;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.scaleX = item.startValue + item.targetValue * percent;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.scaleX = item.startValue - item.targetValue * percent;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_SCALE_Y: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.scaleY = item.startValue + (item.targetValue - item.startValue) * percent;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.scaleY = item.startValue + item.targetValue * percent;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.scaleY = item.startValue - item.targetValue * percent;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_COLOR_R: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.color.r = MathUtils.clamp(item.startValue + (item.targetValue / 255f - item.startValue) * percent, 0, 1);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.color.r = MathUtils.clamp(item.startValue + item.targetValue / 255f * percent, 0, 1);
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.color.r = MathUtils.clamp(item.startValue - item.targetValue / 255f * percent, 0, 1);
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_COLOR_G: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.color.g = MathUtils.clamp(item.startValue + (item.targetValue / 255f - item.startValue) * percent, 0, 1);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.color.g = MathUtils.clamp(item.startValue + item.targetValue / 255f * percent, 0, 1);
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.color.g = MathUtils.clamp(item.startValue - item.targetValue / 255f * percent, 0, 1);
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_COLOR_B: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.color.b = MathUtils.clamp(item.startValue + (item.targetValue / 255f - item.startValue) * percent, 0, 1);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.color.b = MathUtils.clamp(item.startValue + item.targetValue / 255f * percent, 0, 1);
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.color.b = MathUtils.clamp(item.startValue - item.targetValue / 255f * percent, 0, 1);
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_COLOR_ALPHA: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.color.a = MathUtils.clamp(item.startValue + (item.targetValue / 255f - item.startValue) * percent, 0, 1);
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.color.a = MathUtils.clamp(item.startValue + item.targetValue / 255f * percent, 0, 1);
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.color.a = MathUtils.clamp(item.startValue - item.targetValue / 255f * percent, 0, 1);
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_TOWARD: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.toward = item.startValue + (item.targetValue - item.startValue) * percent;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.toward = item.startValue + item.targetValue * percent;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.toward = item.startValue - item.targetValue * percent;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_SPEED: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.speed = item.startValue + (item.targetValue - item.startValue) * percent;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.speed = item.startValue + item.targetValue * percent;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.speed = item.startValue - item.targetValue * percent;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_SPEED_DIRECTION: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.speedDirection = item.startValue + (item.targetValue - item.startValue) * percent;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.speedDirection = item.startValue + item.targetValue * percent;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.speedDirection = item.startValue - item.targetValue * percent;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_ACCELERATION: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.acceleration = item.startValue + (item.targetValue - item.startValue) * percent;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.acceleration = item.startValue + item.targetValue * percent;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.acceleration = item.startValue - item.targetValue * percent;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_ACCELERATION_DIRECTION: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.accelerationDirection = item.startValue + (item.targetValue - item.startValue) * percent;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.accelerationDirection = item.startValue + item.targetValue * percent;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.accelerationDirection = item.startValue - item.targetValue * percent;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case HORIZONTAL_RATIO: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.horizontalRatio = item.startValue + (item.targetValue - item.startValue) * percent;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.horizontalRatio = item.startValue + item.targetValue * percent;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.horizontalRatio = item.startValue - item.targetValue * percent;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case VERTICAL_RATIO: {
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+                                    ref.bulletData.verticalRatio = item.startValue + (item.targetValue - item.startValue) * percent;
+                                }
+                                break;
+                                case INCREMENT: {
+                                    ref.bulletData.verticalRatio = item.startValue + item.targetValue * percent;
+                                }
+                                break;
+                                case DECREMENT: {
+                                    ref.bulletData.verticalRatio = item.startValue - item.targetValue * percent;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
                 break;
-            case 3: // basic curve
+                case 3: { // 类spine基础曲线变化
+                    // TODO:
+                    switch (val.propertyResult) {
+                        case X_AXIS_POSITION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case Y_AXIS_POSITION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case RADIUS: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case RADIUS_DEGREE: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case COUNT: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case CYCLE: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case ANGLE: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case RANGE: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case LAUNCHER_SPEED: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case LAUNCHER_SPEED_DIRECTION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case LAUNCHER_ACCELERATION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case LAUNCHER_ACCELERATION_DIRECTION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_LIFE: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_TYPE: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_SCALE_X: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_SCALE_Y: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_COLOR_R: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_COLOR_G: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_COLOR_B: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_COLOR_ALPHA: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_TOWARD: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_SPEED: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_SPEED_DIRECTION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_ACCELERATION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_ACCELERATION_DIRECTION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case HORIZONTAL_RATIO: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case VERTICAL_RATIO: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
                 break;
-            case 4: // advance curve
+                case 4: { // 类unity高级曲线变化
+                    // TODO:
+                    switch (val.propertyResult) {
+                        case X_AXIS_POSITION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case Y_AXIS_POSITION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case RADIUS: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case RADIUS_DEGREE: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case COUNT: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case CYCLE: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case ANGLE: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case RANGE: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case LAUNCHER_SPEED: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case LAUNCHER_SPEED_DIRECTION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case LAUNCHER_ACCELERATION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case LAUNCHER_ACCELERATION_DIRECTION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_LIFE: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_TYPE: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_SCALE_X: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_SCALE_Y: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_COLOR_R: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_COLOR_G: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_COLOR_B: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_COLOR_ALPHA: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_TOWARD: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_SPEED: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_SPEED_DIRECTION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_ACCELERATION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case BULLET_ACCELERATION_DIRECTION: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case HORIZONTAL_RATIO: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case VERTICAL_RATIO: {
+                            // TODO:
+                            switch (val.changeType) {
+                                case CHANGE_TO: {
+
+                                }
+                                break;
+                                case INCREMENT: {
+
+                                }
+                                break;
+                                case DECREMENT: {
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
                 break;
+            }
+            item.elapsedFrame ++;
+            if (val.curve.type == 2 && item.elapsedFrame == val.duration + 1) { // 正弦变化
+                item.finished = true;
+            } else {
+                if (!(val.curve.type != 2 && item.elapsedFrame == val.duration))
+                    return;
+                item.finished = true;
+            }
         }
     }
 

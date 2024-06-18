@@ -399,11 +399,14 @@ public class NodeTreeJson {
                     // TODO:
                     if (launcher instanceof Emitter) {
                         Timeline conditionDetectionTimeline = TimelineGenerator.emitterConditionDetection((Emitter) launcher, duration);
+                        Timeline resultHandleTimeline = TimelineGenerator.emitterCase((Emitter) launcher, duration);
                         if (conditionTimelineMap.containsKey(collectorName)) {
                             conditionTimelineMap.get(collectorName).add(conditionDetectionTimeline);
+                            conditionTimelineMap.get(collectorName).add(resultHandleTimeline);
                         } else {
                             Array<Timeline> arr = new Array<>();
                             arr.add(conditionDetectionTimeline);
+                            arr.add(resultHandleTimeline);
                             conditionTimelineMap.put(collectorName, arr);
                         }
                     }

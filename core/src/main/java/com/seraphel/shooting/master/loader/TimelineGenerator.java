@@ -10,7 +10,6 @@ import com.seraphel.shooting.master.builtin.data.NodeTreeData;
 import com.seraphel.shooting.master.builtin.timeline.EventTimeline;
 import com.seraphel.shooting.master.builtin.timeline.Timeline;
 import com.seraphel.shooting.master.extend.Emitter;
-import com.seraphel.shooting.master.extend.data.CaseData;
 
 /**
  * 时间轴生成器
@@ -44,10 +43,18 @@ public class TimelineGenerator {
         return conditionTimeline;
     }
 
-    public static Timeline emitterCase(Emitter emitter) {
+    public static Timeline emitterCase(Emitter emitter, float duration) {
         // 事件执行时间轴 [Case Timeline] 应当放在 条件检测之后以及发射之前
         // TODO:
-        return null;
+        int unit = emitter.ref.detectionUnit;
+        float gapTime = Constant.getStandardFrameTime(unit);
+        int detectCount = (int) (duration / gapTime);
+
+        EventTimeline resultTimeline = new EventTimeline(detectCount);
+        for (int i = 0; i < detectCount; i ++) {
+            resultTimeline.setFrame(i, new Event((i + 1) * gapTime, new EventData("HandleResultEvent-" + (i + 1)), emitter.resultActuator));
+        }
+        return resultTimeline;
     }
 
     public static Timeline builtinEvent(JsonValue map, NodeTreeData nodeTreeData) {

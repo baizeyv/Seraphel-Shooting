@@ -3,16 +3,16 @@
   <SolutionFolder>
     <Group ctype="ResourceGroup">
       <RootFolder Name=".">
-        <Folder Name="fnt">
-          <Fnt Name="RecMono.fnt" />
-        </Folder>
-        <Project Name="Debug.csd" Type="Layer" />
         <Folder Name="Debug">
           <Image Name="background.png" />
+        </Folder>
+        <Folder Name="fnt">
+          <Fnt Name="RecMono.fnt" />
         </Folder>
         <Folder Name="plist">
           <PlistInfo Name="Debug.csi" Type="Plist" />
         </Folder>
+        <Project Name="Debug.csd" Type="Layer" />
       </RootFolder>
     </Group>
   </SolutionFolder>
