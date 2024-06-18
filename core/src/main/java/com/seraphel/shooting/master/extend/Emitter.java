@@ -1,5 +1,6 @@
 package com.seraphel.shooting.master.extend;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
@@ -44,13 +45,17 @@ public class Emitter implements Launcher {
 
     /* -------------------- split line -------------------- */
 
+    /* 发射器所在管道的数据 */
     private PipeData pipeData;
 
+    /* 发射器管道所在的节点数据 */
     private NodeTree nodeTree;
 
+    /* 弹幕信息实例 */
     private Barrage barrage;
 
     /* -------------------- split line -------------------- */
+    /* 公用虚拟方法 */
     private VirtualMethod method;
 
     /**
@@ -103,6 +108,11 @@ public class Emitter implements Launcher {
                 }
             }
         };
+    }
+
+    public void update() {
+        float deltaTime = Gdx.graphics.getDeltaTime();
+        // TODO: motion
     }
 
     /**
@@ -297,12 +307,28 @@ public class Emitter implements Launcher {
             for (CaseData caseData : cgData.cases) {
                 if (caseData.detect(conditionMap, cgData, this)) {
                     // 通过条件检验了
-                    ExecutionData eData = new ExecutionData();
-                    eData.elapsedFrame = 0;
-                    eData.targetValue = Float.parseFloat(caseData.resultValue);
-                    eData.startValue = resultMap.get(caseData.propertyResult);
-                    eData.finished = false;
-                    executionMap.put(eData, caseData);
+                    if (caseData.specialRestore) {
+                        recover();
+                    } else if (caseData.specialShoot) {
+                        try {
+                            shoot();
+                        } catch (CloneNotSupportedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    } else {
+                        if (caseData.loopTimes > 0) {
+                            --caseData.loopTimes;
+                            if (caseData.loopTimes == 0) {
+                                caseData.loopTimes = -1;
+                            }
+                        }
+                        ExecutionData eData = new ExecutionData();
+                        eData.elapsedFrame = 0;
+                        eData.targetValue = Float.parseFloat(caseData.resultValue);
+                        eData.startValue = resultMap.get(caseData.propertyResult);
+                        eData.finished = false;
+                        executionMap.put(eData, caseData);
+                    }
                 }
             }
         }
@@ -2763,5 +2789,10 @@ public class Emitter implements Launcher {
         float yy = node.getWorldY();
         shapes.setColor(Color.CYAN);
         shapes.circle(xx, yy, 10);
+    }
+
+    @Override
+    public String toString() {
+        return "Node: " + getNode().data.name + " Pipe: " + pipeData.name + " Emitter: " + name;
     }
 }
