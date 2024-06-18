@@ -127,6 +127,11 @@ public class EmitterData implements Cloneable {
 
     /* -------------------- split line -------------------- */
 
+    /* 发射器的角度为自机的时候会使用 */
+    public float specialAngle;
+
+    /* -------------------- split line -------------------- */
+
     public Array<CaseGroupData> caseGroups = new Array<CaseGroupData>();
 
     public Object cloneX() throws CloneNotSupportedException {

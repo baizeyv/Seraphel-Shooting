@@ -61,6 +61,11 @@ public class BulletData extends ProjectileData implements Cloneable {
 
     /* -------------------- split line -------------------- */
 
+    /* 当子弹的加速度方向为自机的时候会使用 */
+    public float specialAccelerationDirection;
+
+    /* -------------------- split line -------------------- */
+
     public Array<CaseGroupData> caseGroups = new Array<CaseGroupData>();
 
     public Object cloneX() throws CloneNotSupportedException {

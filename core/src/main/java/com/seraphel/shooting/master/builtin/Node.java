@@ -1,5 +1,6 @@
 package com.seraphel.shooting.master.builtin;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -143,6 +144,13 @@ public class Node {
     }
 
     public void drawDebug(ShapeRenderer shapes) {
-
+        float xx = getWorldX();
+        float yy = getWorldY();
+        float rt = getWorldRotationX();
+        float sclX = getWorldScaleX();
+        float sclY = getWorldScaleY();
+        float unit = 20;
+        shapes.setColor(Color.YELLOW);
+        shapes.rect(xx - unit / 2f, yy - unit / 2f, unit / 2f, unit / 2f, unit, unit, sclX, sclY, rt);
     }
 }

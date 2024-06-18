@@ -30,19 +30,28 @@ public class Emitter implements Launcher {
 
     private final String name;
 
+    /* -------------------- split line -------------------- */
+
     public final Executable shootActuator;
 
     public final Executable conditionActuator;
 
     public final Executable resultActuator;
 
+    /* -------------------- split line -------------------- */
+
     private final ArrayMap<ExecutionData, CaseData> executionMap = new ArrayMap<>();
+
+    /* -------------------- split line -------------------- */
 
     private PipeData pipeData;
 
     private NodeTree nodeTree;
 
     private Barrage barrage;
+
+    /* -------------------- split line -------------------- */
+    private VirtualMethod method;
 
     /**
      * 条件MAP
@@ -53,6 +62,8 @@ public class Emitter implements Launcher {
      * 结果MAP
      */
     private final ArrayMap<PropertyType, Float> resultMap = new ArrayMap<>();
+
+    /* -------------------- split line -------------------- */
 
     public Emitter(EmitterData data, LauncherCollector collector, String name) throws CloneNotSupportedException {
         this.data = data;
@@ -95,6 +106,69 @@ public class Emitter implements Launcher {
     }
 
     /**
+     * 初始设置 Ref 数据 TODO: 每次重置都需要调用
+     */
+    private void setupRef() {
+        // 发射器的随机速度值
+        float rdSpeed = MathUtils.lerp(-ref.rdSpeed, ref.rdSpeed, Constant.RANDOM.nextFloat()); // TODO: the third argument error
+        // 发射器的随机速度方向值
+        float rdSpeedDirection = MathUtils.lerp(-ref.rdSpeedDirection, ref.rdSpeedDirection, Constant.RANDOM.nextFloat());
+        // 发射器的随机加速度值
+        float rdAcceleration = MathUtils.lerp(-ref.rdAcceleration, ref.rdAcceleration, Constant.RANDOM.nextFloat());
+        // 发射器的随机加速度方向值
+        float rdAccelerationDirection = MathUtils.lerp(-ref.rdAccelerationDirection, ref.rdAccelerationDirection, Constant.RANDOM.nextFloat());
+
+        // 当前发射器所在的节点
+        Node node = getNode();
+        if (data.shootX == Constant.SPECIAL_SELF) { // SHOOT_X 自身
+            ref.shootX = node.getWorldX();
+        } else if (data.shootX == Constant.SPECIAL_OTHER) { // SHOOT_X 自机
+            ref.shootX = method.getOtherPosition().x;
+        } else {
+            ref.shootX = node.getWorldX() + data.shootX;
+        }
+        /* -------------------- split line -------------------- */
+        if (data.shootY == Constant.SPECIAL_SELF) { // SHOOT_Y 自身
+            ref.shootY = node.getWorldY();
+        } else if (data.shootY == Constant.SPECIAL_OTHER) { // SHOOT_Y 自机
+            ref.shootY = method.getOtherPosition().y;
+        } else {
+            ref.shootY = node.getWorldY() + data.shootY;
+        }
+        /* -------------------- split line -------------------- */
+        if (data.speedDirection == Constant.SPECIAL_OTHER) { // 发射器的速度方向为自机
+            ref.speedDirection = method.getOtherRotation();
+        }
+        if (data.accelerationDirection == Constant.SPECIAL_OTHER) { // 发射器的加速度方向为自机
+            ref.accelerationDirection = method.getOtherRotation();
+        }
+        // 给发射器的 速度、速度方向、加速度、加速度方向 添加随机值
+        ref.acceleration += rdAcceleration;
+        ref.accelerationDirection += rdAccelerationDirection;
+        ref.speed += rdSpeed;
+        ref.speedDirection += rdSpeedDirection;
+        /* -------------------- split line -------------------- */
+        // 存储特殊的发射角度值
+        ref.specialAngle = data.angle;
+        // 存储特殊的子弹加速度方向值
+        ref.bulletData.specialAccelerationDirection = data.bulletData.specialAccelerationDirection;
+        /* -------------------- split line -------------------- */
+        // 处理特殊的发射角度
+        if (data.angle == Constant.SPECIAL_SELF) { // 发射器的发射角度为自身
+            // TODO:发射x,y到node位置的角度 (ref.angle)
+        } else if (data.angle == Constant.SPECIAL_OTHER) { // 发射器的发射角度为自机
+            ref.angle = method.getOtherRotation();
+        }
+        /* -------------------- split line -------------------- */
+        // 处理特殊的子弹加速度方向
+        if (data.bulletData.accelerationDirection == Constant.SPECIAL_SELF) { // 子弹的加速度方向为自身
+            // TODO:发射x,y到node位置的角度 (ref.bulletData.accelerationDirection)
+        } else if (data.bulletData.accelerationDirection == Constant.SPECIAL_OTHER) { // 子弹的加速度方向为自机
+            ref.bulletData.accelerationDirection = method.getOtherRotation();
+        }
+    }
+
+    /**
      * 在构造函数之后需要调用,初始化可以调用的 data
      */
     @Override
@@ -103,8 +177,10 @@ public class Emitter implements Launcher {
     }
 
     @Override
-    public void setupEntity(NodeTree nodeTree) {
+    public void setupEntity(NodeTree nodeTree, VirtualMethod method) {
         this.nodeTree = nodeTree;
+        this.method = method;
+        setupRef();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.seraphel.shooting.master.builtin;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.seraphel.shooting.master.builtin.data.NodeData;
 import com.seraphel.shooting.master.builtin.data.NodeTreeData;
@@ -57,7 +58,13 @@ public class NodeTree {
             launchers = data.defaultCollector.getAllLauncher();
         }
         for (Launcher launcher : launchers) {
-            launcher.setupEntity(this);
+            launcher.setupEntity(this, new VirtualMethod() {
+                @Override
+                public Vector2 getOtherPosition() {
+                    // TODO:
+                    return new Vector2(100, 100);
+                }
+            });
         }
     }
 
@@ -111,6 +118,10 @@ public class NodeTree {
             if (launcher instanceof Emitter) {
                 ((Emitter) launcher).drawDebug(shapes);
             }
+        }
+        for (Node node : this.nodes) {
+            if (node != null)
+                node.drawDebug(shapes);
         }
     }
 

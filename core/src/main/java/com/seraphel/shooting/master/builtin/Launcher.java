@@ -6,7 +6,7 @@ public interface Launcher {
 
     public void setBasicData(PipeData pipeData);
 
-    public void setupEntity(NodeTree nodeTree);
+    public void setupEntity(NodeTree nodeTree, VirtualMethod method);
 
     public void bindBarrage(Barrage barrage);
 
