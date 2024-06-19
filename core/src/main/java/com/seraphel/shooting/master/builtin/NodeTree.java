@@ -24,10 +24,15 @@ public class NodeTree {
 
     public float x, y;
 
+    public final VirtualMethod virtualMethod;
+
     public NodeTree(NodeTreeData data, VirtualMethod virtualMethod) {
         if (data == null)
             throw new IllegalArgumentException("data cannot be null");
+        if (virtualMethod == null)
+            throw new IllegalArgumentException("virtualMethod INTERFACE cannot be null");
         this.data = data;
+        this.virtualMethod = virtualMethod;
 
         nodes = new Array<Node>(data.nodes.size);
         for (NodeData nodeData : data.nodes) {
@@ -112,6 +117,10 @@ public class NodeTree {
             if (launcher instanceof Emitter) {
                 ((Emitter) launcher).drawDebug(shapes);
             }
+        }
+        for (Pipe pipe : this.pipes) {
+            if (pipe != null)
+                pipe.drawDebug(shapes);
         }
         for (Node node : this.nodes) {
             if (node != null)

@@ -1,5 +1,7 @@
 package com.seraphel.shooting.master.builtin;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.seraphel.shooting.master.builtin.data.PipeData;
 
 public class Pipe {
@@ -35,4 +37,10 @@ public class Pipe {
         }
     }
 
+    public void drawDebug(ShapeRenderer shapes) {
+        float nodeX = node.getWorldX();
+        float nodeY = node.getWorldY();
+        shapes.setColor(Color.LIGHT_GRAY);
+        shapes.triangle(nodeX, nodeY, nodeX - 10, nodeY - 10, nodeX + 10, nodeY - 10);
+    }
 }

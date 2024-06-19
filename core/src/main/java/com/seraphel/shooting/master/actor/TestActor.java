@@ -1,11 +1,15 @@
 package com.seraphel.shooting.master.actor;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.seraphel.shooting.constant.Asset;
+import com.seraphel.shooting.constant.Config;
+import com.seraphel.shooting.constant.Log;
+import com.seraphel.shooting.master.Constant;
 import com.seraphel.shooting.master.builtin.BarrageState;
 import com.seraphel.shooting.master.builtin.NodeTree;
 import com.seraphel.shooting.master.builtin.VirtualMethod;
@@ -34,6 +38,7 @@ public class TestActor extends Actor implements VirtualMethod {
         state.play("main", true);
 
         debug();
+        setPosition(100, 200);
     }
 
     @Override
@@ -48,6 +53,7 @@ public class TestActor extends Actor implements VirtualMethod {
     private void update() {
         tmpOffset.set(Vector2.Zero);
         localToStageCoordinates(tmpOffset);
+        tmpOffset.add(Config.WIDTH / 2f, Config.HEIGHT / 2f);
         offsetPosition.set(tmpOffset);
         localToStageInfo(getRotation(), getScaleX(), getScaleY());
     }
@@ -67,6 +73,10 @@ public class TestActor extends Actor implements VirtualMethod {
     @Override
     public void drawDebug(ShapeRenderer shapes) {
         super.drawDebug(shapes);
+        float w = 100, h = 30;
+        shapes.setColor(Color.GREEN);
+        shapes.ellipse(getX() - w / 2f, getY() - h / 2f, w, h);
+        shapes.ellipse(getX() - h / 2f, getY() - w / 2f, h, w);
         nodeTree.drawDebug(shapes);
     }
 

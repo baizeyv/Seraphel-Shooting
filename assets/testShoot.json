@@ -17,6 +17,17 @@
             "shearX": 0,
             "shearY": 0,
             "parent": "root"
+        },
+        {
+            "name": "testNode2",
+            "x": -200,
+            "y": 100,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "shearX": 0,
+            "shearY": 0,
+            "parent": "testNode"
         }
     ],
     "pipes": [

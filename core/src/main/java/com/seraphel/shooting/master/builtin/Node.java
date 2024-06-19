@@ -83,27 +83,27 @@ public class Node {
     }
 
     public float getWorldX() {
-        return worldX;
+        return worldX + nodeTree.virtualMethod.getOffsetPosition().x;
     }
 
     public float getWorldY() {
-        return worldY;
+        return worldY + nodeTree.virtualMethod.getOffsetPosition().y;
     }
 
     public float getWorldRotationX() {
-        return MathUtils.atan2(c, a) * MathUtils.radiansToDegrees;
+        return MathUtils.atan2(c, a) * MathUtils.radiansToDegrees + nodeTree.virtualMethod.getOffsetRotation();
     }
 
     public float getWorldRotationY() {
-        return MathUtils.atan2(d, b) * MathUtils.radiansToDegrees;
+        return MathUtils.atan2(d, b) * MathUtils.radiansToDegrees + nodeTree.virtualMethod.getOffsetRotation();
     }
 
     public float getWorldScaleX() {
-        return (float) Math.sqrt(a * a + c * c);
+        return (float) Math.sqrt(a * a + c * c) * nodeTree.virtualMethod.getOffsetScale().x;
     }
 
     public float getWorldScaleY() {
-        return (float) Math.sqrt(b * b + d * d);
+        return (float) Math.sqrt(b * b + d * d) * nodeTree.virtualMethod.getOffsetScale().y;
     }
 
     public Vector2 worldToLocal(Vector2 world) {
@@ -149,8 +149,11 @@ public class Node {
         float rt = getWorldRotationX();
         float sclX = getWorldScaleX();
         float sclY = getWorldScaleY();
-        float unit = 20;
+        float unit = 30;
         shapes.setColor(Color.YELLOW);
         shapes.rect(xx - unit / 2f, yy - unit / 2f, unit / 2f, unit / 2f, unit, unit, sclX, sclY, rt);
+        for (Node child : children) {
+            shapes.line(xx, yy, child.getWorldX(), child.getWorldY(), Color.BLUE, Color.RED);
+        }
     }
 }
