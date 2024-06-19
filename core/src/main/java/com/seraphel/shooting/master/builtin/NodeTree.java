@@ -24,7 +24,7 @@ public class NodeTree {
 
     public float x, y;
 
-    public NodeTree(NodeTreeData data) {
+    public NodeTree(NodeTreeData data, VirtualMethod virtualMethod) {
         if (data == null)
             throw new IllegalArgumentException("data cannot be null");
         this.data = data;
@@ -42,8 +42,8 @@ public class NodeTree {
             nodes.add(node);
         }
 
-        pipes = new Array<Pipe>(data.pipes.size);
-        drawOrder = new Array<Pipe>(data.pipes.size);
+        pipes = new Array<>(data.pipes.size);
+        drawOrder = new Array<>(data.pipes.size);
         for (PipeData pipeData : data.pipes) {
             Node node = nodes.get(pipeData.nodeData.index);
             Pipe pipe = new Pipe(pipeData, node);
@@ -58,13 +58,7 @@ public class NodeTree {
             launchers = data.defaultCollector.getAllLauncher();
         }
         for (Launcher launcher : launchers) {
-            launcher.setupEntity(this, new VirtualMethod() {
-                @Override
-                public Vector2 getOtherPosition() {
-                    // TODO:
-                    return new Vector2(100, 100);
-                }
-            });
+            launcher.setupEntity(this, virtualMethod);
         }
     }
 
