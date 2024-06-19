@@ -5,7 +5,8 @@
     "nodes": [
         {
             "name": "root",
-            "x": 0
+            "x": 0,
+            "rotation": -30
         },
         {
             "name": "testNode",
@@ -28,6 +29,17 @@
             "shearX": 0,
             "shearY": 0,
             "parent": "testNode"
+        },
+        {
+            "name": "otherNode",
+            "x": 200,
+            "y": 700,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "shearX": 0,
+            "shearY": 0,
+            "parent": "root"
         }
     ],
     "pipes": [
@@ -35,6 +47,11 @@
             "name": "testPipe",
             "node": "testNode",
             "launcher": "testEmitter"
+        },
+        {
+            "name": "testPipe2",
+            "node": "testNode2",
+            "launcher": "testEmitter2"
         }
     ],
     "collectors": [
@@ -97,6 +114,42 @@
                             "verticalRatio": 1
                         }
                     }
+                },
+                "testPipe2": {
+                    "testEmitter2": {
+                        "name": "testEmitter2",
+                        "id": 0,
+                        "layerId": 0,
+                        "detectionUnit": 60,
+                        "bindToId": -1,
+                        "deepBind": false,
+                        "x": 0,
+                        "y": 0,
+                        "startTime": 0,
+                        "endTime": 6000,
+                        "shootX": 300,
+                        "shootY": 200,
+                        "cycle": 5,
+                        "angle": 180,
+                        "radius": 0,
+                        "radiusDegree": 0,
+                        "range": 360,
+                        "count": 1,
+                        "bullet": {
+                            "speed": 300,
+                            "scaleX": 1,
+                            "towardSameAsSpeedDirection": true,
+                            "R": 254,
+                            "G": 115,
+                            "B": 97,
+                            "A": 100,
+                            "life": 70,
+                            "acceleration": 0,
+                            "accelerationDirection": 90,
+                            "horizontalRatio": 1,
+                            "verticalRatio": 1
+                        }
+                    }
                 }
             }
         },
@@ -131,7 +184,7 @@
         "main": {
             "duration": 20,
             "pipes": [
-                "testPipe"
+                "testPipe", "testPipe2"
             ],
             "nodes": {
                 "testNode": {
