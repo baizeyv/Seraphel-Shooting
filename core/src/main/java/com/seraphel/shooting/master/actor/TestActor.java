@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.utils.Align;
 import com.seraphel.shooting.constant.Asset;
 import com.seraphel.shooting.constant.Config;
 import com.seraphel.shooting.constant.Log;
@@ -28,7 +29,10 @@ public class TestActor extends Actor implements VirtualMethod {
 
     private final Vector3 tmpInfo = new Vector3(Vector3.Zero);
 
-    public TestActor() {
+    private final SelfActor selfActor;
+
+    public TestActor(SelfActor selfActor) {
+        this.selfActor = selfActor;
         // TODO:
         NodeTreeData data = Asset.fetch().loadNodeTree("testShoot.json");
         nodeTree = new NodeTree(data, this);
@@ -82,12 +86,12 @@ public class TestActor extends Actor implements VirtualMethod {
 
     @Override
     public Vector2 getOtherPosition() {
-        return new Vector2(100, 100);
+        return new Vector2(selfActor.getX(Align.center), selfActor.getY(Align.center));
     }
 
     @Override
     public float getOtherRotation(float myX, float myY) {
-        Vector2 v1 = new Vector2(1000, 1000);
+        Vector2 v1 = getOtherPosition();
         Vector2 v2 = new Vector2(myX, myY);
         return v1.sub(v2).angleDeg();
     }

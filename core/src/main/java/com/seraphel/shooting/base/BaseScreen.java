@@ -2,6 +2,7 @@ package com.seraphel.shooting.base;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.seraphel.shooting.SeraphelGame;
 import com.seraphel.shooting.constant.Global;
 import com.seraphel.shooting.constant.Log;
 
@@ -11,6 +12,7 @@ public class BaseScreen implements Screen {
 
     public BaseScreen() {
         this.stage = new BaseStage(Global.fetch().viewport, Global.fetch().batch);
+        SeraphelGame.ins.addInput(stage);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.seraphel.shooting;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.seraphel.shooting.screen.MainScreen;
 
@@ -10,13 +9,23 @@ public class SeraphelGame extends Game {
 
     public static SeraphelGame ins;
 
+    private InputMultiplexer inputMultiplexer;
+
     public SeraphelGame() {
         ins = this;
+        inputMultiplexer = new InputMultiplexer();
     }
 
     @Override
     public void create () {
         setScreen(new MainScreen());
+        Gdx.input.setInputProcessor(inputMultiplexer);
+    }
+
+    public void addInput(InputProcessor... input) {
+        for (InputProcessor i : input) {
+            inputMultiplexer.addProcessor(i);
+        }
     }
 
     @Override
