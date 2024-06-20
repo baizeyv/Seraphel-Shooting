@@ -14,7 +14,7 @@ public interface VirtualMethod {
      * 获取自机角度
      * @return 自机角度
      */
-    float getOtherRotation();
+    float getOtherRotation(float myX, float myY);
 
     /**
      * 获取自身对象的位置偏移量 (相对于 Stage)

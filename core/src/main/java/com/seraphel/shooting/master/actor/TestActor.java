@@ -86,8 +86,10 @@ public class TestActor extends Actor implements VirtualMethod {
     }
 
     @Override
-    public float getOtherRotation() {
-        return 0;
+    public float getOtherRotation(float myX, float myY) {
+        Vector2 v1 = new Vector2(1000, 1000);
+        Vector2 v2 = new Vector2(myX, myY);
+        return v1.sub(v2).angleDeg();
     }
 
     @Override

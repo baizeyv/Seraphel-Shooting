@@ -6,7 +6,7 @@
         {
             "name": "root",
             "x": 0,
-            "rotation": -30
+            "rotation": 0
         },
         {
             "name": "testNode",
@@ -130,11 +130,11 @@
                         "shootX": 300,
                         "shootY": 200,
                         "cycle": 5,
-                        "angle": 180,
-                        "radius": 0,
+                        "angle": -99999,
+                        "radius": 100,
                         "radiusDegree": 0,
                         "range": 360,
-                        "count": 1,
+                        "count": 3,
                         "bullet": {
                             "speed": 300,
                             "scaleX": 1,

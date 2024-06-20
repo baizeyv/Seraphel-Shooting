@@ -147,10 +147,10 @@ public class Emitter implements Launcher {
         }
         /* -------------------- split line -------------------- */
         if (data.speedDirection == Constant.SPECIAL_OTHER) { // 发射器的速度方向为自机
-            ref.speedDirection = method.getOtherRotation();
+            ref.speedDirection = method.getOtherRotation(ref.shootX, ref.shootY);
         }
         if (data.accelerationDirection == Constant.SPECIAL_OTHER) { // 发射器的加速度方向为自机
-            ref.accelerationDirection = method.getOtherRotation();
+            ref.accelerationDirection = method.getOtherRotation(ref.shootX, ref.shootY);
         }
         // 给发射器的 速度、速度方向、加速度、加速度方向 添加随机值
         ref.acceleration += rdAcceleration;
@@ -167,14 +167,14 @@ public class Emitter implements Launcher {
         if (data.angle == Constant.SPECIAL_SELF) { // 发射器的发射角度为自身
             // TODO:发射x,y到node位置的角度 (ref.angle)
         } else if (data.angle == Constant.SPECIAL_OTHER) { // 发射器的发射角度为自机
-            ref.angle = method.getOtherRotation();
+            ref.angle = method.getOtherRotation(ref.shootX, ref.shootY);
         }
         /* -------------------- split line -------------------- */
         // 处理特殊的子弹加速度方向
         if (data.bulletData.accelerationDirection == Constant.SPECIAL_SELF) { // 子弹的加速度方向为自身
             // TODO:发射x,y到node位置的角度 (ref.bulletData.accelerationDirection)
         } else if (data.bulletData.accelerationDirection == Constant.SPECIAL_OTHER) { // 子弹的加速度方向为自机
-            ref.bulletData.accelerationDirection = method.getOtherRotation();
+            ref.bulletData.accelerationDirection = method.getOtherRotation(ref.shootX, ref.shootY);
         }
     }
 
@@ -206,24 +206,70 @@ public class Emitter implements Launcher {
         Node node = nodeTree.findNode(pipeData.nodeData.name);
         float worldRotation = node.getWorldRotationX();
 
-        for (int i = 0; i < ref.count; i++) {
-            float partRotation = ref.range / ref.count;
-            float offsetRotation = (i - (ref.count - 1) / 2f) * partRotation; // 计算范围和条数后的角度
+        // 条数随机增量
+        float countRd = MathUtils.lerp(-ref.rdCount, ref.rdCount, Constant.RANDOM.nextFloat());
+        // 发射x坐标随机增量
+        float shootXRd = MathUtils.lerp(-ref.rdShootX, ref.rdShootX, Constant.RANDOM.nextFloat());
+        // 发射y坐标随机增量
+        float shootYRd = MathUtils.lerp(-ref.rdShootY, ref.rdShootY, Constant.RANDOM.nextFloat());
+        // 发射半径随机增量
+        float radiusRd = MathUtils.lerp(-ref.rdRadius, ref.rdRadius, Constant.RANDOM.nextFloat());
+        // 发射半径方向随机增量
+        float radiusDirectionRd = MathUtils.lerp(-ref.rdRadiusDegree, ref.rdRadiusDegree, Constant.RANDOM.nextFloat());
+        // 发射范围随机增量
+        float rangeRd = MathUtils.lerp(-ref.rdRange, ref.rdRange, Constant.RANDOM.nextFloat());
+        // 发射角度随机增量
+        float angleRd = MathUtils.lerp(-ref.rdAngle, ref.rdAngle, Constant.RANDOM.nextFloat());
+        // 发射的子弹朝向随机增量
+        float towardRd = MathUtils.lerp(-ref.bulletData.rdToward, ref.bulletData.rdToward, Constant.RANDOM.nextFloat());
+        // 发射的子弹速度随机增量
+        float bulletSpeedRd = MathUtils.lerp(-ref.bulletData.rdSpeed, ref.bulletData.rdSpeed, Constant.RANDOM.nextFloat());
+        // 发射的子弹加速度随机增量
+        float bulletAccelerationRd = MathUtils.lerp(-ref.bulletData.rdAcceleration, ref.bulletData.rdAcceleration, Constant.RANDOM.nextFloat());
+        // 发射的子弹的加速度方向随机增量
+        float bulletAccelerationDirectionRd = MathUtils.lerp(-ref.bulletData.rdAccelerationDirection, ref.bulletData.rdAccelerationDirection, Constant.RANDOM.nextFloat());
+
+        for (int i = 0; i < ref.count + countRd; i++) {
+            if (data.radiusDegree == Constant.SPECIAL_OTHER) { // 半径方向为自机
+                // NOTE: 此时所有的半径方向变化事件均会失效, 事件会执行,但不会改变弹幕的表现
+//                ref.radiusDegree = nodeTree.virtualMethod.getOtherRotation(, ); // TODO:
+            }
+
+            float partRotation = (ref.range + rangeRd) / (ref.count + countRd);
+            float offsetRotation = (i - ((ref.count + countRd) - 1) / 2f) * partRotation; // 计算范围和条数后的角度
 
             // 只通过条数和范围来计算出的角度
             float noAngleDegree = worldRotation + offsetRotation;
 
-            // TODO:
+            // TODO: 发射x,y坐标目前有错误
             float baseX = node.getWorldX();
             float baseY = node.getWorldY();
-            baseX += ref.radius * MathUtils.cosDeg(noAngleDegree + ref.radiusDegree);
-            baseY += ref.radius * MathUtils.sinDeg(noAngleDegree + ref.radiusDegree);
+            baseX += (ref.radius + radiusRd) * MathUtils.cosDeg(noAngleDegree + ref.radiusDegree + radiusDirectionRd);
+            baseY += (ref.radius + radiusRd) * MathUtils.sinDeg(noAngleDegree + ref.radiusDegree + radiusDirectionRd);
 
             // 最终发射方向 (角度值)
-            float resultShootDirection = worldRotation + ref.angle + offsetRotation;
+            float resultShootDirection = worldRotation + (ref.angle + angleRd) + offsetRotation;
+
+            // NOTE: 在以下的两种情况下所有的发射角度变化事件均会失效, 事件会执行,但不会改变弹幕的表现
+            if (ref.specialAngle == Constant.SPECIAL_SELF) { // 发射角度为自身
+                // TODO:
+            } else if (ref.specialAngle == Constant.SPECIAL_OTHER) { // 发射角度为自机
+                resultShootDirection = nodeTree.virtualMethod.getOtherRotation(baseX, baseY) + angleRd + offsetRotation + worldRotation;
+            }
 
             BulletData bulletData = (BulletData) ref.bulletData.cloneX();
             bulletData.speedDirection = resultShootDirection;
+            bulletData.toward += towardRd;
+            bulletData.speed += bulletSpeedRd;
+            bulletData.acceleration += bulletAccelerationRd;
+
+            // NOTE: 在以下的两种情况下所有的子弹加速度方向变化事件均会失效, 事件会执行,但不会改变弹幕的表现
+            if (ref.bulletData.specialAccelerationDirection == Constant.SPECIAL_SELF) { // 子弹的加速度方向为自身
+                // TODO:
+            } else if (ref.bulletData.specialAccelerationDirection == Constant.SPECIAL_OTHER) { // 子弹的加速度方向为自机
+                bulletData.accelerationDirection = nodeTree.virtualMethod.getOtherRotation(baseX, baseY) + bulletAccelerationDirectionRd;
+            }
+
             TestBulletActor testBulletActor = new TestBulletActor("test.plist", "border", bulletData, this);
             testBulletActor.setOrigin(Align.center);
             testBulletActor.setPosition(baseX, baseY, Align.center);
