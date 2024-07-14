@@ -8,6 +8,8 @@ public interface Launcher {
 
     public void setupEntity(NodeTree nodeTree, VirtualMethod method);
 
+    public void reset();
+
     public void bindBarrage(Barrage barrage);
 
 }

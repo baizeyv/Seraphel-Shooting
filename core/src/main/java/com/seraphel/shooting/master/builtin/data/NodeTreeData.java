@@ -1,6 +1,8 @@
 package com.seraphel.shooting.master.builtin.data;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ArrayMap;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.seraphel.shooting.master.builtin.Barrage;
 import com.seraphel.shooting.master.builtin.LauncherCollector;
 
@@ -14,7 +16,7 @@ public class NodeTreeData {
 
     public final Array<Barrage> barrages = new Array<Barrage>();
 
-    public final Array<LauncherCollector> collectors = new Array<LauncherCollector>();
+    public final ArrayMap<String, LauncherCollector> collectors = new ArrayMap<>();
 
     public LauncherCollector defaultCollector;
 
@@ -70,8 +72,8 @@ public class NodeTreeData {
 
     public Array<String> getAllCollectorNames() {
         Array<String> res = new Array<String>();
-        for (LauncherCollector collector : collectors) {
-            res.add(collector.name);
+        for (ObjectMap.Entry<String, LauncherCollector> entry : collectors) {
+            res.add(entry.key);
         }
         return res;
     }

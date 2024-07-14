@@ -3,6 +3,7 @@ package com.seraphel.shooting.master.builtin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.seraphel.shooting.constant.Log;
 import com.seraphel.shooting.master.builtin.data.BarrageStateData;
 import com.seraphel.shooting.master.builtin.timeline.EventTimeline;
 import com.seraphel.shooting.master.builtin.timeline.Timeline;
@@ -25,6 +26,8 @@ public class BarrageState {
     private final EventQueue queue = new EventQueue(this);
 
     private float timeScale = 1;
+
+    private Barrage currentBarrage;
 
     public BarrageState(BarrageStateData data) {
         if (data == null)
@@ -142,6 +145,13 @@ public class BarrageState {
             complete = barrageTime >= barrageEnd && entry.barrageLast < barrageEnd;
         if (complete) {
             queue.complete(entry);
+            // TODO: 恢复所有Emitter的初始状态
+            for (ObjectMap.Entry<String, ArrayMap<String, Launcher>> item : currentBarrage.collectorLaunchers) {
+                for (ObjectMap.Entry<String, Launcher> ety : item.value) {
+                    Log.error(item.key + " - " + ety.key);
+                    ety.value.reset();
+                }
+            }
             // 清除由Case创造出的时间轴
             if (track.barrage.timelines.containsKey(TimelinePriority.MIDDLE)) {
                 track.barrage.timelines.get(TimelinePriority.MIDDLE).clear();
@@ -175,6 +185,7 @@ public class BarrageState {
     public TrackEntry play(Barrage barrage, boolean loop) {
         if (barrage == null)
             throw new IllegalArgumentException("Barrage cannot be null");
+        currentBarrage = barrage;
         TrackEntry current = track;
         if (current != null) {
             queue.interrupt(current);

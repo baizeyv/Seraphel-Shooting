@@ -142,7 +142,8 @@ public class NodeTreeJson {
                     }
                 }
             }
-            nodeTreeData.collectors.add(collector);
+
+            nodeTreeData.collectors.put(collector.name, collector);
             if (collector.name.equals("default"))
                 nodeTreeData.defaultCollector = collector;
         }

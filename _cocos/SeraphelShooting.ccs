@@ -5,6 +5,7 @@
       <RootFolder Name=".">
         <Folder Name="Debug">
           <Image Name="background.png" />
+          <Image Name="ssuvi.png" />
         </Folder>
         <Folder Name="fnt">
           <Fnt Name="RecMono.fnt" />

@@ -13,7 +13,7 @@ import com.seraphel.shooting.master.actor.TestBulletActor;
 import com.seraphel.shooting.master.builtin.*;
 import com.seraphel.shooting.master.builtin.data.ExecutionData;
 import com.seraphel.shooting.master.builtin.data.PipeData;
-import com.seraphel.shooting.master.builtin.timeline.*;
+import com.seraphel.shooting.master.builtin.timeline.Timeline;
 import com.seraphel.shooting.master.extend.data.BulletData;
 import com.seraphel.shooting.master.extend.data.CaseData;
 import com.seraphel.shooting.master.extend.data.CaseGroupData;
@@ -119,6 +119,55 @@ public class Emitter implements Launcher {
      * 初始设置 Ref 数据 TODO: 每次重置都需要调用
      */
     private void setupRef() {
+        // 当前发射器所在的节点
+        Node node = getNode();
+        if (node == null)
+            return;
+
+        /* -------------------------------------------------- */
+        // TODO: 恢复 ref 原始数据
+        ref.id = data.id;
+        ref.layerId = data.layerId;
+        ref.detectionUnit = data.detectionUnit;
+        ref.bindToId = data.bindToId;
+        ref.deepBind = data.deepBind;
+        ref.relativeDirection = data.relativeDirection;
+        ref.x = data.x;
+        ref.y = data.y;
+        ref.startTime = data.startTime;
+        ref.endTime = data.endTime;
+        ref.shootX = data.shootX;
+        ref.rdShootX = data.rdShootX;
+        ref.shootY = data.shootY;
+        ref.rdShootY = data.rdShootY;
+        ref.radius = data.radius;
+        ref.rdRadius = data.rdRadius;
+        ref.radiusDegree = data.radiusDegree;
+        ref.rdRadiusDegree = data.rdRadiusDegree;
+        ref.count = data.count;
+        ref.rdCount = data.rdCount;
+        ref.cycle = data.cycle;
+        ref.rdCycle = data.rdCycle;
+        ref.angle = data.angle;
+        ref.rdAngle = data.rdAngle;
+        ref.range = data.range;
+        ref.rdRange = data.rdRange;
+        ref.speed = data.speed;
+        ref.rdSpeed = data.rdSpeed;
+        ref.speedDirection = data.speedDirection;
+        ref.rdSpeedDirection = data.rdSpeedDirection;
+        ref.acceleration = data.acceleration;
+        ref.rdAcceleration = data.rdAcceleration;
+        ref.accelerationDirection = data.accelerationDirection;
+        ref.rdAccelerationDirection = data.rdAccelerationDirection;
+        ref.bulletData = (BulletData) data.bulletData.cloneX();
+        ref.removeOutOfScreen = data.removeOutOfScreen;
+        ref.disappearEffect = data.disappearEffect;
+        ref.tailEffect = data.tailEffect;
+        ref.specialAngle = data.specialAngle;
+        ref.caseGroups = new Array<>(data.caseGroups);
+        /* -------------------------------------------------- */
+
         // 发射器的随机速度值
         float rdSpeed = MathUtils.lerp(-ref.rdSpeed, ref.rdSpeed, Constant.RANDOM.nextFloat()); // TODO: the third argument error
         // 发射器的随机速度方向值
@@ -128,8 +177,6 @@ public class Emitter implements Launcher {
         // 发射器的随机加速度方向值
         float rdAccelerationDirection = MathUtils.lerp(-ref.rdAccelerationDirection, ref.rdAccelerationDirection, Constant.RANDOM.nextFloat());
 
-        // 当前发射器所在的节点
-        Node node = getNode();
         if (data.shootX == Constant.SPECIAL_SELF) { // SHOOT_X 自身
             ref.shootX = node.getWorldX();
         } else if (data.shootX == Constant.SPECIAL_OTHER) { // SHOOT_X 自机
@@ -190,6 +237,11 @@ public class Emitter implements Launcher {
     public void setupEntity(NodeTree nodeTree, VirtualMethod method) {
         this.nodeTree = nodeTree;
         this.method = method;
+        setupRef();
+    }
+
+    @Override
+    public void reset() {
         setupRef();
     }
 
@@ -2826,6 +2878,8 @@ public class Emitter implements Launcher {
     }
 
     public Node getNode() {
+        if (nodeTree == null)
+            return null;
         return nodeTree.findNode(pipeData.nodeData.name);
     }
 

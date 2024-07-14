@@ -43,13 +43,9 @@
                             "Y": 0.5
                         },
                         "PreSize": {
-                            "X": 0.024,
-                            "Y": 0.0426
+                            "X": 1.0,
+                            "Y": 1.0
                         },
-                        "LeftMargin": 937.0,
-                        "RightMargin": 937.0,
-                        "TopMargin": 517.0,
-                        "BottomMargin": 517.0,
                         "Tag": 9,
                         "ActionTag": -1470770604,
                         "Size": {
@@ -125,6 +121,8 @@
                         "ColorVector": {
                             "ScaleY": 1.0
                         },
+                        "Scale9Width": 1,
+                        "Scale9Height": 1,
                         "TouchEnable": true,
                         "AnchorPoint": {
                             "ScaleX": 0.5,
@@ -220,6 +218,8 @@
                         "ColorVector": {
                             "ScaleY": 1.0
                         },
+                        "Scale9Width": 1,
+                        "Scale9Height": 1,
                         "TouchEnable": true,
                         "AnchorPoint": {
                             "ScaleX": 0.5,
@@ -297,6 +297,51 @@
                         },
                         "Name": "Bottom",
                         "ctype": "PanelObjectData"
+                    },
+                    {
+                        "FileData": {
+                            "Type": "MarkedSubImage",
+                            "Path": "Debug/ssuvi.png",
+                            "Plist": "plist/Debug.plist"
+                        },
+                        "BlendFunc": {
+                            "Src": 1,
+                            "Dst": 771
+                        },
+                        "AnchorPoint": {
+                            "ScaleX": 0.5,
+                            "ScaleY": 0.5
+                        },
+                        "Position": {
+                            "X": 1760.0,
+                            "Y": 1000.0
+                        },
+                        "Scale": {
+                            "ScaleX": 1.0,
+                            "ScaleY": 1.0
+                        },
+                        "CColor": {},
+                        "IconVisible": false,
+                        "PrePosition": {
+                            "X": 0.9167,
+                            "Y": 0.9259
+                        },
+                        "PreSize": {
+                            "X": 0.1562,
+                            "Y": 0.1204
+                        },
+                        "LeftMargin": 1610.0,
+                        "RightMargin": 10.0,
+                        "TopMargin": 15.0,
+                        "BottomMargin": 935.0,
+                        "Tag": 8,
+                        "ActionTag": 1287694681,
+                        "Size": {
+                            "X": 300.0,
+                            "Y": 130.0
+                        },
+                        "Name": "ssuvi",
+                        "ctype": "SpriteObjectData"
                     }
                 ],
                 "Size": {

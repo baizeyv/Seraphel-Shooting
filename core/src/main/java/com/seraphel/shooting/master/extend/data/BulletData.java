@@ -68,16 +68,20 @@ public class BulletData extends ProjectileData implements Cloneable {
 
     public Array<CaseGroupData> caseGroups = new Array<CaseGroupData>();
 
-    public Object cloneX() throws CloneNotSupportedException {
-        BulletData res = (BulletData) super.clone();
-        if (this.color != null)
-            res.color = new Color(this.color);
-        else
-            res.color = new Color(Color.WHITE);
-        res.caseGroups = new Array<CaseGroupData>();
-        for (CaseGroupData caseGroupData : this.caseGroups) {
-            res.caseGroups.add((CaseGroupData) caseGroupData.cloneX());
+    public Object cloneX() {
+        try {
+            BulletData res = (BulletData) super.clone();
+            if (this.color != null)
+                res.color = new Color(this.color);
+            else
+                res.color = new Color(Color.WHITE);
+            res.caseGroups = new Array<CaseGroupData>();
+            for (CaseGroupData caseGroupData : this.caseGroups) {
+                res.caseGroups.add((CaseGroupData) caseGroupData.cloneX());
+            }
+            return res;
+        } catch (Exception e) {
+            return null;
         }
-        return res;
     }
 }

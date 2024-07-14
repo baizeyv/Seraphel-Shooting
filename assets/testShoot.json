@@ -87,13 +87,13 @@
                                     {
                                         "conditionA": 0,
                                         "operatorA": 2,
-                                        "valueA": 1,
-                                        "propertyResult": 7,
-                                        "resultValue": 90,
+                                        "valueA": 240,
+                                        "propertyResult": 5,
+                                        "resultValue": 3,
                                         "changeType": 1,
-                                        "duration": 100,
+                                        "duration": 1,
                                         "curve": {
-                                            "type": "SIN"
+                                            "type": "FIX"
                                         }
                                     }
                                 ]
@@ -171,6 +171,42 @@
                         "shootY": 200,
                         "cycle": 5
                     }
+                },
+                "testPipe2": {
+                    "testEmitter2": {
+                        "name": "testEmitter2",
+                        "id": 0,
+                        "layerId": 0,
+                        "detectionUnit": 60,
+                        "bindToId": -1,
+                        "deepBind": false,
+                        "x": 0,
+                        "y": 0,
+                        "startTime": 0,
+                        "endTime": 6000,
+                        "shootX": 300,
+                        "shootY": 200,
+                        "cycle": 5,
+                        "angle": -99999,
+                        "radius": 100,
+                        "radiusDegree": 0,
+                        "range": 360,
+                        "count": 3,
+                        "bullet": {
+                            "speed": 300,
+                            "scaleX": 1,
+                            "towardSameAsSpeedDirection": true,
+                            "R": 254,
+                            "G": 115,
+                            "B": 97,
+                            "A": 100,
+                            "life": 70,
+                            "acceleration": 0,
+                            "accelerationDirection": 90,
+                            "horizontalRatio": 1,
+                            "verticalRatio": 1
+                        }
+                    }
                 }
             }
         }
@@ -182,9 +218,9 @@
     },
     "barrages": {
         "main": {
-            "duration": 20,
+            "duration": 5,
             "pipes": [
-                "testPipe", "testPipe2"
+                "testPipe"
             ],
             "nodes": {
                 "testNode": {

@@ -3,6 +3,7 @@
   <Content ExportType="Png" SortAlgorithm="MaxRects" PicturePadding="2" AllowRotation="True" AllowAnySize="True" AllowTrim="True" ctype="PlistInfoData">
     <ImageFiles>
       <FilePathData Path="Debug/background.png" />
+      <FilePathData Path="Debug/ssuvi.png" />
     </ImageFiles>
     <MaxSize Width="2048" Height="2048" />
   </Content>

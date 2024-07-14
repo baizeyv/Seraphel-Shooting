@@ -1,7 +1,6 @@
 package com.seraphel.shooting.master.builtin;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.seraphel.shooting.master.builtin.data.NodeData;
 import com.seraphel.shooting.master.builtin.data.NodeTreeData;
@@ -61,6 +60,7 @@ public class NodeTree {
             launchers = launcherCollector.getAllLauncher();
         } else if (data.defaultCollector != null) {
             launchers = data.defaultCollector.getAllLauncher();
+            launcherCollector = data.defaultCollector;
         }
         for (Launcher launcher : launchers) {
             launcher.setupEntity(this, virtualMethod);
